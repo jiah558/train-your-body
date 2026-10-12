@@ -106,7 +106,7 @@
           <h2 style="margin:0">今日清单</h2>
           <span class="muted num" id="checkProgress">0/0</span>
         </div>
-        <p class="muted" style="margin:0 0 12px;font-size:12.5px">勾完一项划掉一项；全部完成后会有仪式感打卡</p>
+        <p class="muted" style="margin:0 0 12px;font-size:12.5px">早午晚先点选菜再勾选；热量与蛋白为估测。全部完成后有仪式感打卡</p>
         <div id="checklistRoot"></div>
       </div>
 
@@ -320,6 +320,29 @@
     </div>
     <p class="cel-msg" id="celMsg">今日任务全部完成</p>
     <button type="button" class="btn tonal cel-btn" id="btnDismissCelebrate">收好印章</button>
+  </div>
+
+
+  <!-- Meal picker sheet -->
+  <div class="sheet" id="mealSheet" hidden>
+    <div class="sheet-backdrop" data-close-sheet></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="mealSheetTitle">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <h2 id="mealSheetTitle">选菜</h2>
+        <button type="button" class="sheet-x" data-close-sheet aria-label="关闭">×</button>
+      </div>
+      <div class="sheet-search">
+        <input type="search" id="mealSheetSearch" placeholder="搜索菜品…" enterkeyhint="search" autocomplete="off" />
+      </div>
+      <div class="sheet-filters" id="mealSheetFilters"></div>
+      <div class="sheet-list" id="mealSheetList"></div>
+      <div class="sheet-foot">
+        <div class="sheet-rice" id="mealSheetRice" hidden></div>
+        <div class="sheet-sum" id="mealSheetSum"></div>
+        <button type="button" class="btn primary" id="mealSheetConfirm">确认选菜</button>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast" role="status"></div>

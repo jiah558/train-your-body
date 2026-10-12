@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-11T04:49:53.358Z",
+  "breakfast": [
+    {
+      "id": "bf-jiaozi",
+      "name": "饺子",
+      "kcal": 520,
+      "protein": 22,
+      "note": "约一盘/一袋速冻煮熟",
+      "category": "早餐",
+      "source": "常用",
+      "meal": "breakfast"
+    },
+    {
+      "id": "bf-sanjin",
+      "name": "三津汤包盲盒套餐",
+      "kcal": 480,
+      "protein": 20,
+      "note": "两包子+烧卖+豆浆",
+      "category": "早餐",
+      "source": "常用",
+      "meal": "breakfast"
+    },
+    {
+      "id": "bf-aircook",
+      "name": "空刻意面",
+      "kcal": 650,
+      "protein": 18,
+      "note": "整份意面（看包装略浮动）",
+      "category": "早餐",
+      "source": "常用",
+      "meal": "breakfast"
+    },
+    {
+      "id": "bf-zajiang",
+      "name": "楼下粉面馆·杂酱面",
+      "kcal": 620,
+      "protein": 24,
+      "note": "",
+      "category": "早餐",
+      "source": "常用",
+      "meal": "breakfast"
+    },
+    {
+      "id": "bf-lajiao",
+      "name": "楼下粉面馆·辣椒炒肉粉",
+      "kcal": 680,
+      "protein": 28,
+      "note": "",
+      "category": "早餐",
+      "source": "常用",
+      "meal": "breakfast"
+    }
+  ],
+  "lunchDinner": [
+    {
+      "id": "seed-01",
+      "name": "辣椒炒肉",
+      "category": "荤菜炒菜",
+      "rating": 3,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-02",
+      "name": "韭黄炒蛋炒肉",
+      "category": "荤菜炒菜",
+      "rating": 4,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-03",
+      "name": "农家一碗香",
+      "category": "荤菜炒菜",
+      "rating": 2.5,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-04",
+      "name": "生烧排骨",
+      "category": "荤菜炒菜",
+      "rating": 4,
+      "kcal": 480,
+      "protein": 30,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-05",
+      "name": "西芹炒牛肉",
+      "category": "荤菜炒菜",
+      "rating": 3.5,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-06",
+      "name": "香菜泡椒牛肉",
+      "category": "荤菜炒菜",
+      "rating": 3,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-07",
+      "name": "豪牌鸡公煲",
+      "category": "荤菜炒菜",
+      "rating": 2.5,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-08",
+      "name": "衡阳茶油小炒鸡",
+      "category": "荤菜炒菜",
+      "rating": 2.5,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-09",
+      "name": "临沂炒鸡",
+      "category": "荤菜炒菜",
+      "rating": 3.5,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-10",
+      "name": "可乐鸡翅",
+      "category": "荤菜炒菜",
+      "rating": 4,
+      "kcal": 5,
+      "protein": 0,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-11",
+      "name": "红烧肉",
+      "category": "荤菜炒菜",
+      "rating": 4,
+      "kcal": 550,
+      "protein": 28,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-12",
+      "name": "丝瓜蛋汤",
+      "category": "小菜素菜",
+      "rating": 3,
+      "kcal": 150,
+      "protein": 10,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-13",
+      "name": "炒时蔬",
+      "category": "小菜素菜",
+      "rating": 2.5,
+      "kcal": 90,
+      "protein": 3,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-14",
+      "name": "豪牌炒方便面",
+      "category": "特色主食",
+      "rating": 3,
+      "kcal": 520,
+      "protein": 16,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "seed-15",
+      "name": "豪牌蛋炒饭",
+      "category": "特色主食",
+      "rating": 3,
+      "kcal": 520,
+      "protein": 16,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "d-muzcmww1-mx3h1j",
+      "name": "罐焖牛肉（隋坡版）",
+      "category": "荤菜炒菜",
+      "rating": 3.5,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    },
+    {
+      "id": "d-mv3bi83c-06dz47",
+      "name": "青椒炒肉",
+      "category": "荤菜炒菜",
+      "rating": 3.5,
+      "kcal": 420,
+      "protein": 32,
+      "source": "小锅小灶",
+      "meal": "lunch_dinner"
+    }
+  ],
+  "drinks": [
+    {
+      "id": "seed-16",
+      "name": "胖东来葡萄汁",
+      "category": "饮品",
+      "rating": 3.5,
+      "kcal": 90,
+      "protein": 1,
+      "source": "小锅小灶",
+      "meal": "drink"
+    },
+    {
+      "id": "seed-17",
+      "name": "胖东来橙汁",
+      "category": "饮品",
+      "rating": 2.5,
+      "kcal": 90,
+      "protein": 1,
+      "source": "小锅小灶",
+      "meal": "drink"
+    },
+    {
+      "id": "seed-18",
+      "name": "港版可乐",
+      "category": "饮品",
+      "rating": 3,
+      "kcal": 5,
+      "protein": 0,
+      "source": "小锅小灶",
+      "meal": "drink"
+    },
+    {
+      "id": "seed-19",
+      "name": "保拉纳白啤",
+      "category": "饮品",
+      "rating": 3,
+      "kcal": 80,
+      "protein": 1,
+      "source": "小锅小灶",
+      "meal": "drink"
+    }
+  ],
+  "note": "热量/蛋白为估测，仅供打卡参考"
+}

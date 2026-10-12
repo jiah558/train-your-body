@@ -455,3 +455,116 @@ body::after{
   .cel-bloom,.cel-bloom-2,.cel-seal,.seal-outer{animation:none!important}
   .cel-seal{opacity:1;transform:none}
 }
+
+/* ===== Meal picker sheet ===== */
+body.sheet-open{overflow:hidden}
+.sheet{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;justify-content:flex-end}
+.sheet[hidden]{display:none!important}
+.sheet-backdrop{
+  position:absolute;inset:0;background:rgba(47,43,39,.34);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  animation:celFade .3s var(--ease) both
+}
+@media (prefers-color-scheme:dark){.sheet-backdrop{background:rgba(0,0,0,.5)}}
+.sheet-panel{
+  position:relative;z-index:1;max-width:var(--phone);width:100%;margin:0 auto;
+  max-height:min(88dvh,720px);display:flex;flex-direction:column;
+  background:var(--card);border-radius:22px 22px 0 0;
+  box-shadow:var(--sh-pop);padding:0 0 calc(12px + var(--sab));
+  animation:sheetUp .42s var(--ease) both
+}
+@keyframes sheetUp{from{transform:translateY(28px);opacity:.6}to{transform:none;opacity:1}}
+.sheet-handle{
+  width:36px;height:4px;border-radius:2px;background:var(--line);margin:10px auto 4px;flex:none
+}
+.sheet-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:6px 16px 10px;flex:none
+}
+.sheet-head h2{margin:0;font-size:17px;font-weight:500;letter-spacing:-.01em}
+.sheet-x{
+  width:32px;height:32px;border-radius:16px;background:var(--fill2);color:var(--tx3);
+  font-size:22px;line-height:1;display:grid;place-items:center
+}
+.sheet-search{padding:0 16px 8px;flex:none}
+.sheet-search input{
+  width:100%;height:40px;border-radius:12px;border:.5px solid var(--line);
+  background:var(--card2);padding:0 14px;outline:none
+}
+.sheet-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-bg)}
+.sheet-filters{
+  display:flex;gap:6px;overflow-x:auto;padding:0 16px 10px;flex:none;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none
+}
+.sheet-filters::-webkit-scrollbar{display:none}
+.chip-filter{
+  flex:none;height:28px;padding:0 12px;border-radius:14px;font-size:12px;font-weight:500;
+  background:var(--fill2);color:var(--tx3);white-space:nowrap
+}
+.chip-filter.on{background:var(--blue-bg);color:var(--blue-tx)}
+.sheet-list{
+  flex:1;min-height:120px;overflow-y:auto;padding:0 12px 8px;
+  -webkit-overflow-scrolling:touch
+}
+.sheet-empty{padding:28px 12px;text-align:center;font-size:13px}
+.dish-card{
+  display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;
+  padding:12px;border-radius:var(--r-lg);background:var(--card2);margin-bottom:6px;
+  border:.5px solid transparent;transition:transform .4s var(--spring),background .2s,border-color .2s
+}
+.dish-card:active{transform:scale(.98)}
+.dish-card.on{background:linear-gradient(160deg,var(--dn-bg),transparent 70%),var(--card2);border-color:rgba(106,139,114,.35)}
+.dish-check{
+  width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line);
+  display:grid;place-items:center;flex:none;margin-top:1px;background:var(--card)
+}
+.dish-card.on .dish-check{background:var(--dn);border-color:var(--dn);color:#fbf9f6}
+.dish-check svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dish-body{flex:1;min-width:0}
+.dish-name{font-size:14.5px;font-weight:500;letter-spacing:-.01em}
+.dish-meta{font-size:11.5px;color:var(--tx3);margin-top:3px;font-feature-settings:"tnum"}
+.dish-meta .est{
+  display:inline-block;font-size:10px;font-weight:600;letter-spacing:.06em;
+  color:var(--val);background:var(--val-b);padding:1px 5px;border-radius:4px;margin-right:2px
+}
+.dish-cat{font-size:11px;color:var(--tx4);margin-top:2px}
+.sheet-foot{
+  flex:none;padding:8px 16px 4px;border-top:.5px solid var(--line2);
+  background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)
+}
+.sheet-sum{
+  display:flex;justify-content:space-between;gap:8px;align-items:center;
+  font-size:12.5px;color:var(--tx3);margin-bottom:8px;font-feature-settings:"tnum"
+}
+.sheet-sum .num{color:var(--tx2);font-weight:500}
+.sheet-rice{margin-bottom:8px}
+.rice-chip{
+  width:100%;text-align:left;padding:10px 12px;border-radius:12px;
+  background:var(--val-b);color:var(--val);font-size:12.5px;font-weight:500;
+  border:.5px solid transparent
+}
+.rice-chip.on{border-color:rgba(163,128,74,.35)}
+.rice-hint{font-size:11.5px;margin-top:6px;padding:0 2px}
+
+/* meal checklist row */
+.meal-item{cursor:default;align-items:flex-start}
+.meal-item .meal-check{
+  width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line);
+  display:grid;place-items:center;flex:none;margin-top:1px;background:var(--card);padding:0
+}
+.meal-item.done .meal-check{background:var(--dn);border-color:var(--dn);color:#fbf9f6}
+.meal-item .meal-check svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.meal-pick{
+  flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;cursor:pointer;color:inherit
+}
+.pick-cta{color:var(--blue-tx)!important;font-weight:500}
+.meal-item.need-pick{box-shadow:inset 0 0 0 .5px rgba(111,132,148,.22)}
+.opt-tag{
+  display:inline-block;font-size:10px;font-weight:600;letter-spacing:.04em;
+  color:var(--tx4);background:var(--fill2);padding:1px 6px;border-radius:6px;
+  vertical-align:middle;margin-left:4px
+}
+.cl-meta .est,.est-inline{
+  display:inline-block;font-size:10px;font-weight:600;color:var(--val);
+  background:var(--val-b);padding:0 4px;border-radius:3px;margin-right:2px
+}

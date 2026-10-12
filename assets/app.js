@@ -77,12 +77,312 @@
     }
   };
 
-  const MEALS = [
-    { id: 'breakfast', name: '早餐', kcal: 450, protein: 35, hint: '鸡蛋 / 燕麦 / 奶 · 约 450 kcal' },
-    { id: 'lunch', name: '午餐', kcal: 700, protein: 50, hint: '主食 + 瘦肉/鱼 + 蔬菜 · 约 700 kcal' },
-    { id: 'dinner', name: '晚餐', kcal: 650, protein: 45, hint: '清淡为主，练后可略增碳水 · 约 650 kcal' },
-    { id: 'snack', name: '加餐（可选）', kcal: 200, protein: 10, hint: '酸奶 / 水果 / 坚果一小把 · 约 200 kcal', optional: true }
+  /* ===== Meal catalog & picker ===== */
+  const RICE_ADDON = { id: 'addon-rice', name: '米饭（主食搭配）', kcal: 200, protein: 4 };
+  const MEAL_SLOTS = [
+    { id: 'breakfast', name: '早餐', required: true, mode: 'single', source: 'breakfast', max: 1 },
+    { id: 'lunch', name: '午餐', required: true, mode: 'multi', source: 'lunchDinner', max: 2, allowRice: true },
+    { id: 'dinner', name: '晚餐', required: true, mode: 'multi', source: 'lunchDinner', max: 2, allowRice: true },
+    { id: 'snack', name: '加餐 / 饮品', required: false, mode: 'multi', source: 'drinks', max: 2 }
   ];
+
+  const FALLBACK_CATALOG = {"version":1,"updatedAt":"2026-10-11T04:49:53.358Z","breakfast":[{"id":"bf-jiaozi","name":"饺子","kcal":520,"protein":22,"note":"约一盘/一袋速冻煮熟","category":"早餐","source":"常用","meal":"breakfast"},{"id":"bf-sanjin","name":"三津汤包盲盒套餐","kcal":480,"protein":20,"note":"两包子+烧卖+豆浆","category":"早餐","source":"常用","meal":"breakfast"},{"id":"bf-aircook","name":"空刻意面","kcal":650,"protein":18,"note":"整份意面（看包装略浮动）","category":"早餐","source":"常用","meal":"breakfast"},{"id":"bf-zajiang","name":"楼下粉面馆·杂酱面","kcal":620,"protein":24,"note":"","category":"早餐","source":"常用","meal":"breakfast"},{"id":"bf-lajiao","name":"楼下粉面馆·辣椒炒肉粉","kcal":680,"protein":28,"note":"","category":"早餐","source":"常用","meal":"breakfast"}],"lunchDinner":[{"id":"seed-01","name":"辣椒炒肉","category":"荤菜炒菜","rating":3,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-02","name":"韭黄炒蛋炒肉","category":"荤菜炒菜","rating":4,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-03","name":"农家一碗香","category":"荤菜炒菜","rating":2.5,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-04","name":"生烧排骨","category":"荤菜炒菜","rating":4,"kcal":480,"protein":30,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-05","name":"西芹炒牛肉","category":"荤菜炒菜","rating":3.5,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-06","name":"香菜泡椒牛肉","category":"荤菜炒菜","rating":3,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-07","name":"豪牌鸡公煲","category":"荤菜炒菜","rating":2.5,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-08","name":"衡阳茶油小炒鸡","category":"荤菜炒菜","rating":2.5,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-09","name":"临沂炒鸡","category":"荤菜炒菜","rating":3.5,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-10","name":"可乐鸡翅","category":"荤菜炒菜","rating":4,"kcal":5,"protein":0,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-11","name":"红烧肉","category":"荤菜炒菜","rating":4,"kcal":550,"protein":28,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-12","name":"丝瓜蛋汤","category":"小菜素菜","rating":3,"kcal":150,"protein":10,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-13","name":"炒时蔬","category":"小菜素菜","rating":2.5,"kcal":90,"protein":3,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-14","name":"豪牌炒方便面","category":"特色主食","rating":3,"kcal":520,"protein":16,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"seed-15","name":"豪牌蛋炒饭","category":"特色主食","rating":3,"kcal":520,"protein":16,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"d-muzcmww1-mx3h1j","name":"罐焖牛肉（隋坡版）","category":"荤菜炒菜","rating":3.5,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"},{"id":"d-mv3bi83c-06dz47","name":"青椒炒肉","category":"荤菜炒菜","rating":3.5,"kcal":420,"protein":32,"source":"小锅小灶","meal":"lunch_dinner"}],"drinks":[{"id":"seed-16","name":"胖东来葡萄汁","category":"饮品","rating":3.5,"kcal":90,"protein":1,"source":"小锅小灶","meal":"drink"},{"id":"seed-17","name":"胖东来橙汁","category":"饮品","rating":2.5,"kcal":90,"protein":1,"source":"小锅小灶","meal":"drink"},{"id":"seed-18","name":"港版可乐","category":"饮品","rating":3,"kcal":5,"protein":0,"source":"小锅小灶","meal":"drink"},{"id":"seed-19","name":"保拉纳白啤","category":"饮品","rating":3,"kcal":80,"protein":1,"source":"小锅小灶","meal":"drink"}],"note":"热量/蛋白为估测，仅供打卡参考"};
+
+  let mealCatalog = FALLBACK_CATALOG;
+  let pickerState = null; // { mealId, dishIds:[], rice:bool, filter, q }
+
+  function emptyMealSlot(mealId) {
+    const def = MEAL_SLOTS.find(m => m.id === mealId);
+    return {
+      dishIds: [],
+      rice: !!(def && def.allowRice),
+      done: false
+    };
+  }
+
+  function normalizeMealSlot(raw, mealId) {
+    if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+      return {
+        dishIds: Array.isArray(raw.dishIds) ? raw.dishIds.slice() : [],
+        rice: typeof raw.rice === 'boolean' ? raw.rice : emptyMealSlot(mealId).rice,
+        done: !!raw.done
+      };
+    }
+    // legacy boolean — discard (no dish info)
+    return emptyMealSlot(mealId);
+  }
+
+  function ensureMeals(day) {
+    if (!day.meals || typeof day.meals !== 'object') day.meals = {};
+    MEAL_SLOTS.forEach(m => {
+      day.meals[m.id] = normalizeMealSlot(day.meals[m.id], m.id);
+    });
+    return day.meals;
+  }
+
+  function catalogList(source) {
+    if (!mealCatalog) return [];
+    return mealCatalog[source] || [];
+  }
+
+  function findDish(id) {
+    if (id === RICE_ADDON.id) return RICE_ADDON;
+    const pools = [
+      ...(mealCatalog.breakfast || []),
+      ...(mealCatalog.lunchDinner || []),
+      ...(mealCatalog.drinks || [])
+    ];
+    return pools.find(d => d.id === id) || null;
+  }
+
+  function resolveDishes(ids) {
+    return (ids || []).map(findDish).filter(Boolean);
+  }
+
+  function needsRiceHint(dishIds) {
+    const dishes = resolveDishes(dishIds);
+    if (!dishes.length) return false;
+    const hasStaple = dishes.some(d => d.category === '特色主食');
+    const hasStir = dishes.some(d => d.category === '荤菜炒菜');
+    return hasStir && !hasStaple;
+  }
+
+  function mealSlotMacros(slot, mealId) {
+    let kcal = 0;
+    let protein = 0;
+    resolveDishes(slot.dishIds).forEach(d => {
+      kcal += Number(d.kcal) || 0;
+      protein += Number(d.protein) || 0;
+    });
+    const def = MEAL_SLOTS.find(m => m.id === mealId);
+    if (def && def.allowRice && slot.rice) {
+      kcal += RICE_ADDON.kcal;
+      protein += RICE_ADDON.protein;
+    }
+    return { kcal: Math.round(kcal), protein: Math.round(protein) };
+  }
+
+  function mealHasSelection(slot) {
+    return !!(slot && slot.dishIds && slot.dishIds.length);
+  }
+
+  function mealLabelLines(slot, mealId) {
+    const dishes = resolveDishes(slot.dishIds);
+    if (!dishes.length) {
+      return { sub: '点此选菜', meta: '未选择 · 选好后再勾选计入热量' };
+    }
+    const names = dishes.map(d => d.name);
+    const def = MEAL_SLOTS.find(m => m.id === mealId);
+    if (def && def.allowRice && slot.rice) names.push('米饭');
+    const macros = mealSlotMacros(slot, mealId);
+    return {
+      sub: names.join(' · '),
+      meta: '估 ' + macros.kcal + ' kcal · 蛋白 ' + macros.protein + ' g'
+    };
+  }
+
+  async function loadMealCatalog() {
+    try {
+      const r = await fetch('data/meal-catalog.json', { cache: 'no-cache' });
+      if (r.ok) {
+        const data = await r.json();
+        if (data && (data.breakfast || data.lunchDinner)) {
+          mealCatalog = data;
+          return;
+        }
+      }
+    } catch (e) { /* use fallback */ }
+    mealCatalog = FALLBACK_CATALOG;
+  }
+
+  function closeMealSheet() {
+    const el = document.getElementById('mealSheet');
+    if (el) el.hidden = true;
+    pickerState = null;
+    document.body.classList.remove('sheet-open');
+  }
+
+  function openMealSheet(mealId) {
+    const def = MEAL_SLOTS.find(m => m.id === mealId);
+    if (!def) return;
+    const day = getDay();
+    ensureMeals(day);
+    const slot = day.meals[mealId];
+    pickerState = {
+      mealId,
+      dishIds: slot.dishIds.slice(),
+      rice: !!slot.rice,
+      filter: '全部',
+      q: ''
+    };
+    // default rice on when stir-fry without staple
+    if (def.allowRice && needsRiceHint(pickerState.dishIds) && slot.dishIds.length === 0) {
+      pickerState.rice = true;
+    }
+    document.getElementById('mealSheetTitle').textContent = '选' + def.name;
+    document.getElementById('mealSheetSearch').value = '';
+    document.body.classList.add('sheet-open');
+    const el = document.getElementById('mealSheet');
+    el.hidden = false;
+    renderMealSheet();
+  }
+
+  function pickerCategories(def) {
+    const list = catalogList(def.source);
+    const cats = [];
+    list.forEach(d => {
+      if (d.category && cats.indexOf(d.category) < 0) cats.push(d.category);
+    });
+    return ['全部'].concat(cats);
+  }
+
+  function renderMealSheet() {
+    if (!pickerState) return;
+    const def = MEAL_SLOTS.find(m => m.id === pickerState.mealId);
+    const filters = document.getElementById('mealSheetFilters');
+    const cats = pickerCategories(def);
+    filters.innerHTML = cats.map(c =>
+      '<button type="button" class="chip-filter' + (pickerState.filter === c ? ' on' : '') +
+      '" data-cat="' + escapeHtml(c) + '">' + escapeHtml(c) + '</button>'
+    ).join('');
+    filters.querySelectorAll('[data-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        pickerState.filter = btn.dataset.cat;
+        renderMealSheet();
+      });
+    });
+
+    let list = catalogList(def.source).slice();
+    if (pickerState.filter && pickerState.filter !== '全部') {
+      list = list.filter(d => d.category === pickerState.filter);
+    }
+    const q = (pickerState.q || '').trim().toLowerCase();
+    if (q) list = list.filter(d => (d.name || '').toLowerCase().indexOf(q) >= 0);
+
+    const root = document.getElementById('mealSheetList');
+    if (!list.length) {
+      root.innerHTML = '<div class="sheet-empty muted">没有匹配的菜品</div>';
+    } else {
+      root.innerHTML = list.map(d => {
+        const on = pickerState.dishIds.indexOf(d.id) >= 0;
+        const rating = d.rating != null ? (' · ★' + d.rating) : '';
+        return '<button type="button" class="dish-card' + (on ? ' on' : '') + '" data-dish="' + d.id + '">' +
+          '<div class="dish-check">' + (on ? CHECK_SVG : '') + '</div>' +
+          '<div class="dish-body">' +
+          '<div class="dish-name">' + escapeHtml(d.name) + '</div>' +
+          '<div class="dish-meta"><span class="est">估</span> ' + d.kcal + ' kcal · 蛋白 ' + d.protein + ' g' +
+          (d.note ? ' · ' + escapeHtml(d.note) : '') + rating + '</div>' +
+          '<div class="dish-cat">' + escapeHtml(d.category || '') + '</div>' +
+          '</div></button>';
+      }).join('');
+      root.querySelectorAll('[data-dish]').forEach(btn => {
+        btn.addEventListener('click', () => togglePickerDish(btn.dataset.dish));
+      });
+    }
+
+    // rice row
+    const riceEl = document.getElementById('mealSheetRice');
+    if (def.allowRice) {
+      const showHint = needsRiceHint(pickerState.dishIds) || pickerState.rice;
+      riceEl.hidden = !showHint && pickerState.dishIds.length === 0;
+      if (!riceEl.hidden) {
+        riceEl.innerHTML =
+          '<button type="button" class="rice-chip' + (pickerState.rice ? ' on' : '') + '" id="btnToggleRice">' +
+          (pickerState.rice ? '✓ ' : '') + '主食搭配 · 米饭 +' + RICE_ADDON.kcal + ' kcal / ' + RICE_ADDON.protein + ' g 蛋白</button>' +
+          (needsRiceHint(pickerState.dishIds) && !pickerState.rice
+            ? '<div class="rice-hint muted">只点了炒菜的话，建议加一碗米饭</div>' : '');
+        const b = document.getElementById('btnToggleRice');
+        if (b) b.addEventListener('click', () => {
+          pickerState.rice = !pickerState.rice;
+          renderMealSheet();
+        });
+      }
+    } else {
+      riceEl.hidden = true;
+      riceEl.innerHTML = '';
+    }
+
+    const macros = mealSlotMacros(
+      { dishIds: pickerState.dishIds, rice: pickerState.rice, done: false },
+      pickerState.mealId
+    );
+    const n = pickerState.dishIds.length;
+    const maxHint = def.mode === 'single' ? '选 1 份' : ('已选 ' + n + '/' + def.max);
+    document.getElementById('mealSheetSum').innerHTML =
+      '<span>' + maxHint + '</span><span class="num">估 ' + macros.kcal + ' kcal · ' + macros.protein + ' g 蛋白</span>';
+  }
+
+  function togglePickerDish(id) {
+    if (!pickerState) return;
+    const def = MEAL_SLOTS.find(m => m.id === pickerState.mealId);
+    const idx = pickerState.dishIds.indexOf(id);
+    if (def.mode === 'single') {
+      pickerState.dishIds = idx >= 0 ? [] : [id];
+    } else {
+      if (idx >= 0) {
+        pickerState.dishIds.splice(idx, 1);
+      } else {
+        if (pickerState.dishIds.length >= def.max) {
+          toast('最多选 ' + def.max + ' 道');
+          return;
+        }
+        pickerState.dishIds.push(id);
+      }
+    }
+    // auto-enable rice when stir-fry without staple
+    if (def.allowRice && needsRiceHint(pickerState.dishIds)) {
+      pickerState.rice = true;
+    }
+    if (def.allowRice && !needsRiceHint(pickerState.dishIds)) {
+      // keep user's rice choice; if they picked 特色主食, optionally turn off
+      const dishes = resolveDishes(pickerState.dishIds);
+      if (dishes.some(d => d.category === '特色主食')) pickerState.rice = false;
+    }
+    renderMealSheet();
+  }
+
+  function confirmMealSheet() {
+    if (!pickerState) return;
+    const def = MEAL_SLOTS.find(m => m.id === pickerState.mealId);
+    if (def.required && pickerState.dishIds.length === 0) {
+      toast('请先选一道菜');
+      return;
+    }
+    const day = getDay();
+    ensureMeals(day);
+    const slot = day.meals[pickerState.mealId];
+    slot.dishIds = pickerState.dishIds.slice();
+    slot.rice = !!pickerState.rice;
+    // selecting dishes marks ready; auto-check if has selection
+    slot.done = mealHasSelection(slot) || (!def.required && slot.dishIds.length > 0);
+    if (!def.required && slot.dishIds.length === 0) slot.done = false;
+    if (def.required) slot.done = mealHasSelection(slot);
+    save();
+    closeMealSheet();
+    afterCheck(day);
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function bindMealSheet() {
+    const sheet = document.getElementById('mealSheet');
+    if (!sheet) return;
+    sheet.querySelectorAll('[data-close-sheet]').forEach(el => {
+      el.addEventListener('click', closeMealSheet);
+    });
+    document.getElementById('mealSheetConfirm').addEventListener('click', confirmMealSheet);
+    document.getElementById('mealSheetSearch').addEventListener('input', (e) => {
+      if (!pickerState) return;
+      pickerState.q = e.target.value || '';
+      renderMealSheet();
+    });
+  }
 
   const CARDIO = {
     id: 'cardio',
@@ -158,10 +458,12 @@
   }
 
   function emptyDay(plan) {
+    const meals = {};
+    MEAL_SLOTS.forEach(m => { meals[m.id] = emptyMealSlot(m.id); });
     return {
       plan: plan || weekdayDefaultPlan(),
       waterTicks: 0,
-      meals: {},
+      meals,
       exercises: {},
       cardio: false,
       celebrated: false,
@@ -178,7 +480,7 @@
       state.daily[key] = emptyDay(planned);
     }
     const day = state.daily[key];
-    if (!day.meals) day.meals = {};
+    ensureMeals(day);
     if (!day.exercises) day.exercises = {};
     if (typeof day.waterTicks !== 'number') day.waterTicks = 0;
     return day;
@@ -309,12 +611,15 @@
   }
 
   function mealTotals(day) {
+    ensureMeals(day);
     let kcal = 0;
     let protein = 0;
-    MEALS.forEach(m => {
-      if (day.meals[m.id]) {
-        kcal += m.kcal;
-        protein += m.protein;
+    MEAL_SLOTS.forEach(m => {
+      const slot = day.meals[m.id];
+      if (slot && slot.done && mealHasSelection(slot)) {
+        const t = mealSlotMacros(slot, m.id);
+        kcal += t.kcal;
+        protein += t.protein;
       }
     });
     return { kcal, protein };
@@ -330,9 +635,14 @@
       done: (day.waterTicks || 0) >= WATER_TICKS
     });
 
-    // required meals
-    MEALS.filter(m => !m.optional).forEach(m => {
-      tasks.push({ id: 'meal_' + m.id, done: !!day.meals[m.id] });
+    // required meals: done only when selected + checked
+    ensureMeals(day);
+    MEAL_SLOTS.filter(m => m.required).forEach(m => {
+      const slot = day.meals[m.id];
+      tasks.push({
+        id: 'meal_' + m.id,
+        done: !!(slot && slot.done && mealHasSelection(slot))
+      });
     });
 
     if (plan === 'R') {
@@ -504,17 +814,24 @@
     }
     html += '</div></div></div>';
 
-    // Meals
+    // Meals (pick dishes then check)
+    ensureMeals(day);
     html += '<div class="cl-group"><div class="cl-head"><h3>饮食</h3>';
-    html += '<span class="muted" style="font-size:11.5px">勾选计入热量与蛋白</span></div>';
-    MEALS.forEach(m => {
-      const on = !!day.meals[m.id];
-      html += '<div class="cl-item' + (on ? ' done' : '') + '" data-act="meal" data-id="' + m.id + '">';
-      html += '<div class="check">' + (on ? CHECK_SVG : '') + '</div>';
-      html += '<div class="cl-body"><div class="cl-title">' + m.name + '</div>';
-      html += '<div class="cl-sub">' + m.hint + '</div>';
-      html += '<div class="cl-meta">' + m.kcal + ' kcal · 蛋白 ' + m.protein + ' g' +
-        (m.optional ? ' · 不计入全勤必选项' : '') + '</div></div></div>';
+    html += '<span class="muted" style="font-size:11.5px">选菜后勾选 · 热量为估</span></div>';
+    MEAL_SLOTS.forEach(m => {
+      const slot = day.meals[m.id];
+      const has = mealHasSelection(slot);
+      const on = !!(slot.done && has);
+      const lines = mealLabelLines(slot, m.id);
+      html += '<div class="cl-item meal-item' + (on ? ' done' : '') + (!has ? ' need-pick' : '') + '" data-meal="' + m.id + '">';
+      html += '<button type="button" class="check meal-check" data-act="meal-toggle" data-id="' + m.id + '" aria-label="勾选' + m.name + '">' +
+        (on ? CHECK_SVG : '') + '</button>';
+      html += '<button type="button" class="cl-body meal-pick" data-act="meal-pick" data-id="' + m.id + '">';
+      html += '<div class="cl-title">' + m.name +
+        (m.required ? '' : ' <span class="opt-tag">可选</span>') + '</div>';
+      html += '<div class="cl-sub' + (!has ? ' pick-cta' : '') + '">' + escapeHtml(lines.sub) + '</div>';
+      html += '<div class="cl-meta">' + escapeHtml(lines.meta) + '</div>';
+      html += '</button></div>';
     });
     html += '</div>';
 
@@ -551,10 +868,21 @@
     root.innerHTML = html;
 
     // events
-    root.querySelectorAll('[data-act="meal"]').forEach(el => {
-      el.addEventListener('click', () => {
+    root.querySelectorAll('[data-act="meal-pick"]').forEach(el => {
+      el.addEventListener('click', () => openMealSheet(el.dataset.id));
+    });
+    root.querySelectorAll('[data-act="meal-toggle"]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
         const id = el.dataset.id;
-        day.meals[id] = !day.meals[id];
+        ensureMeals(day);
+        const slot = day.meals[id];
+        if (!mealHasSelection(slot)) {
+          toast('先点右侧选菜');
+          openMealSheet(id);
+          return;
+        }
+        slot.done = !slot.done;
         save();
         afterCheck(day);
       });
@@ -1100,15 +1428,18 @@
   syncThemeColor();
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncThemeColor);
 
-  // ensure today day record exists
+  bindMealSheet();
+
+  // ensure today day record exists; load dish catalog then paint
   getDay();
   currentPlan = suggestPlan();
   renderHome();
 
-  // if already complete today but never dismissed overlay this session and celebrateSeen false — show badge only
-  const bootDay = getDay();
-  if (checklistStats(bootDay).complete && bootDay.celebrated && !bootDay.celebrateSeen) {
-    // first completion this day not yet dismissed — show once
-    showCelebration();
-  }
+  loadMealCatalog().then(() => {
+    renderHome();
+    const bootDay = getDay();
+    if (checklistStats(bootDay).complete && bootDay.celebrated && !bootDay.celebrateSeen) {
+      showCelebration();
+    }
+  });
 })();

@@ -36,19 +36,78 @@
       </div>
     </header>
 
-    <!-- HOME -->
+    <!-- TODAY / HOME -->
     <section class="view active" id="view-home">
-      <div class="card hero">
-        <div class="hero-k">今天建议</div>
-        <div class="hero-row">
+      <div class="date-line">
+        <span id="todayDateLabel">—</span>
+        <span class="done-badge" id="dayDoneBadge" hidden>已完成</span>
+      </div>
+
+      <!-- Calorie hero -->
+      <div class="card kcal-hero">
+        <div class="kcal-top">
+          <div class="kcal-ring-wrap">
+            <svg class="kcal-ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="kcal-track" cx="60" cy="60" r="52"/>
+              <circle class="kcal-bar" id="kcalBar" cx="60" cy="60" r="52"
+                stroke-dasharray="326.73" stroke-dashoffset="326.73"
+                transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="kcal-center">
+              <div class="kcal-remain num" id="kcalRemain">2000</div>
+              <div class="kcal-unit">剩余 kcal</div>
+            </div>
+          </div>
+          <div class="kcal-stats">
+            <div class="kcal-k">今日热量</div>
+            <div class="kcal-target num" id="kcalTargetLabel">目标 2000</div>
+            <div class="kcal-eaten muted" id="kcalEatenLabel">已摄入 0</div>
+            <div class="pro-block">
+              <div class="row between">
+                <span class="muted">蛋白质</span>
+                <span class="num muted" id="proLabel">0 / 140 g</span>
+              </div>
+              <div class="progress warm"><i id="proBar"></i></div>
+            </div>
+            <div class="pro-block" style="margin-top:8px">
+              <div class="row between">
+                <span class="muted">饮水</span>
+                <span class="num muted" id="waterLabel">0 / 2.8 L</span>
+              </div>
+              <div class="progress sage"><i id="waterBar"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session picker -->
+      <div class="card session-card">
+        <div class="row between">
           <div style="min-width:0">
-            <div class="hero-title" id="todayTitle">A · 推+核心</div>
+            <div class="hero-k">今日训练</div>
+            <div class="hero-title" id="todayTitle" style="margin:4px 0 6px;font-size:18px">A · 推+核心</div>
             <div class="tags" id="todayTags"></div>
           </div>
           <div class="letter" id="todayLetter">A</div>
         </div>
-        <p class="hero-desc" id="todayDesc"></p>
-        <button class="btn primary" id="btnStartWorkout">开始今日训练</button>
+        <p class="hero-desc" id="todayDesc" style="margin:10px 0 12px"></p>
+        <div class="plan-pills" id="planPills">
+          <button type="button" data-plan="A">A 推</button>
+          <button type="button" data-plan="B">B 拉</button>
+          <button type="button" data-plan="C">C 腿</button>
+          <button type="button" data-plan="R">有氧</button>
+          <button type="button" data-plan="X">休息</button>
+        </div>
+      </div>
+
+      <!-- Daily checklist -->
+      <div class="card checklist-card">
+        <div class="row between" style="margin-bottom:4px">
+          <h2 style="margin:0">今日清单</h2>
+          <span class="muted num" id="checkProgress">0/0</span>
+        </div>
+        <p class="muted" style="margin:0 0 12px;font-size:12.5px">勾完一项划掉一项；全部完成后会有仪式感打卡</p>
+        <div id="checklistRoot"></div>
       </div>
 
       <div class="grid3">
@@ -89,7 +148,7 @@
 
       <div class="note-card">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>
-        <div>每日约 <strong>1900–2100 kcal</strong>，蛋白质 <strong>130–150 g</strong>。主食别断，少油炸甜饮。非医疗建议。</div>
+        <div>默认可吃约 <strong id="noteKcal">2000 kcal</strong>，蛋白质 <strong id="notePro">140 g</strong>，饮水 <strong id="noteWater">2.8 L</strong>。主食别断，少油炸甜饮。非医疗建议。</div>
       </div>
 
       <div class="disclaimer">体脂秤与本站仅供参考，非医疗诊断。若有持续不适请就医。</div>
@@ -153,6 +212,9 @@
           <div class="field"><label>目标体重 kg</label><input type="number" id="cfgGoalW" step="0.1" /></div>
           <div class="field"><label>目标体脂 %</label><input type="number" id="cfgGoalF" step="0.1" /></div>
           <div class="field"><label>基础代谢</label><input type="number" id="cfgBmr" step="1" /></div>
+          <div class="field"><label>每日热量 kcal</label><input type="number" id="cfgKcal" step="10" /></div>
+          <div class="field"><label>每日蛋白 g</label><input type="number" id="cfgProtein" step="1" /></div>
+          <div class="field"><label>饮水目标 ml</label><input type="number" id="cfgWater" step="100" /></div>
         </div>
         <button class="btn tonal" id="btnSaveCfg">保存设定</button>
       </div>
@@ -209,7 +271,7 @@
       </div>
       <div class="card">
         <h2>训练节奏建议</h2>
-        <p class="muted" style="margin:0">力量 A/B/C 隔天轮换，中间插 2 次有氧 30–40 分钟。睡眠优先；「起飞」别硬戒，先保证睡够、别连续熬夜力竭。</p>
+        <p class="muted" style="margin:0">默认：一 A · 二有氧 · 三 B · 四有氧 · 五 C；周末可休息或自选。可在「今日」随时改成 A/B/C/有氧/休息。睡眠优先。</p>
       </div>
       <div class="card">
         <h2>危险区</h2>
@@ -223,7 +285,7 @@
   <nav class="tabbar glass" aria-label="主导航">
     <button type="button" data-view="home" class="on">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 01-1 1h-5v-6H10v6H5a1 1 0 01-1-1v-9.5z"/></svg>
-      首页
+      今日
     </button>
     <button type="button" data-view="workout">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8v8M17 8v8M4 10v4M20 10v4M7 12h10"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
@@ -242,6 +304,24 @@
       设置
     </button>
   </nav>
+
+  <!-- Ceremonial celebration overlay -->
+  <div class="celebrate" id="celebrate" hidden>
+    <div class="cel-backdrop"></div>
+    <div class="cel-bloom" aria-hidden="true"></div>
+    <div class="cel-bloom cel-bloom-2" aria-hidden="true"></div>
+    <div class="cel-seal" role="img" aria-label="今日全勤">
+      <div class="seal-outer">
+        <div class="seal-inner">
+          <div class="seal-mark">今日全勤</div>
+          <div class="seal-sub">体能小屋 · 打卡</div>
+        </div>
+      </div>
+    </div>
+    <p class="cel-msg" id="celMsg">今日任务全部完成</p>
+    <button type="button" class="btn tonal cel-btn" id="btnDismissCelebrate">收好印章</button>
+  </div>
+
   <div class="toast" id="toast" role="status"></div>
 
   <script src="assets/app.js"></script>

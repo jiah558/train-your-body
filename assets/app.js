@@ -3,6 +3,8 @@
   'use strict';
 
   const STORAGE_KEY = 'tyb_rein_v1';
+  const KCAL_CIRC = 2 * Math.PI * 52; // ~326.73
+  const WATER_TICKS = 4;
 
   const PLANS = {
     A: {
@@ -12,13 +14,13 @@
       tags: ['推', '核心', '胸肩'],
       colorClass: '',
       exercises: [
-        { id: 'a1', name: '杠铃卧推 / 器械推胸', sets: '4 × 8–12', tip: '肩胛后收下沉，触胸即推；新手可用史密斯或器械' },
-        { id: 'a2', name: '哑铃肩上推举', sets: '3 × 8–12', tip: '核心绷紧，避免过度仰腰' },
-        { id: 'a3', name: '双杠臂屈伸 / 器械双杠', sets: '3 × 8–12', tip: '肘贴近身体，幅度可控；不够力可用辅助机' },
-        { id: 'a4', name: '俯卧撑（辅助热身/力竭）', sets: '2 × 尽量多次', tip: '卧推后做，标准或跪姿均可' },
-        { id: 'a5', name: '臀桥 / 髋推（器械或垫上）', sets: '3 × 12', tip: '顶峰收缩臀，别用腰硬顶' },
-        { id: 'a6', name: '死虫 Dead Bug', sets: '3 × 8/侧', tip: '下背贴地，对侧手脚慢伸' },
-        { id: 'a7', name: '平板支撑', sets: '3 × 20–40 秒', tip: '骨盆中立，臀微收，别塌腰' }
+        { id: 'a1', name: '杠铃卧推 / 器械推胸', sets: '4 × 8–12', setCount: 4, tip: '肩胛后收下沉，触胸即推；新手可用史密斯或器械' },
+        { id: 'a2', name: '哑铃肩上推举', sets: '3 × 8–12', setCount: 3, tip: '核心绷紧，避免过度仰腰' },
+        { id: 'a3', name: '双杠臂屈伸 / 器械双杠', sets: '3 × 8–12', setCount: 3, tip: '肘贴近身体，幅度可控；不够力可用辅助机' },
+        { id: 'a4', name: '俯卧撑（辅助热身/力竭）', sets: '2 × 尽量多次', setCount: 2, tip: '卧推后做，标准或跪姿均可' },
+        { id: 'a5', name: '臀桥 / 髋推（器械或垫上）', sets: '3 × 12', setCount: 3, tip: '顶峰收缩臀，别用腰硬顶' },
+        { id: 'a6', name: '死虫 Dead Bug', sets: '3 × 8/侧', setCount: 3, tip: '下背贴地，对侧手脚慢伸' },
+        { id: 'a7', name: '平板支撑', sets: '3 × 20–40 秒', setCount: 3, tip: '骨盆中立，臀微收，别塌腰' }
       ]
     },
     B: {
@@ -28,14 +30,14 @@
       tags: ['拉', '引体', '背'],
       colorClass: 'B',
       exercises: [
-        { id: 'b1', name: '单杠悬垂（Dead Hang）', sets: '3 × 20–40 秒', tip: '肩下沉激活，握距略宽于肩' },
-        { id: 'b2', name: '肩胛引体 Scapular Pull', sets: '3 × 8', tip: '手臂伸直，只做肩胛下沉上提' },
-        { id: 'b3', name: '辅助引体机 / 弹力带引体', sets: '4 × 5–8', tip: '能做完整幅度优先；重量逐步减辅助' },
-        { id: 'b4', name: '高位下拉 Lat Pulldown', sets: '3 × 8–12', tip: '肘向髋拉，下巴略过杠即可，别后仰猛甩' },
-        { id: 'b5', name: '坐姿划船 / 绳索划船', sets: '3 × 8–12', tip: '替代桌下划船；胸挺、肩胛后收' },
-        { id: 'b6', name: '离心引体（Negatives）', sets: '3 × 3–5', tip: '跳上或踩辅助到顶，再 3–5 秒慢下放' },
-        { id: 'b7', name: '鸟狗 Bird Dog', sets: '3 × 8/侧', tip: '骨盆稳定，对侧手脚伸直停 1 秒' },
-        { id: 'b8', name: '侧平板', sets: '2 × 20 秒/侧', tip: '肩肘垂直，髋上顶成一条线' }
+        { id: 'b1', name: '单杠悬垂（Dead Hang）', sets: '3 × 20–40 秒', setCount: 3, tip: '肩下沉激活，握距略宽于肩' },
+        { id: 'b2', name: '肩胛引体 Scapular Pull', sets: '3 × 8', setCount: 3, tip: '手臂伸直，只做肩胛下沉上提' },
+        { id: 'b3', name: '辅助引体机 / 弹力带引体', sets: '4 × 5–8', setCount: 4, tip: '能做完整幅度优先；重量逐步减辅助' },
+        { id: 'b4', name: '高位下拉 Lat Pulldown', sets: '3 × 8–12', setCount: 3, tip: '肘向髋拉，下巴略过杠即可，别后仰猛甩' },
+        { id: 'b5', name: '坐姿划船 / 绳索划船', sets: '3 × 8–12', setCount: 3, tip: '替代桌下划船；胸挺、肩胛后收' },
+        { id: 'b6', name: '离心引体（Negatives）', sets: '3 × 3–5', setCount: 3, tip: '跳上或踩辅助到顶，再 3–5 秒慢下放' },
+        { id: 'b7', name: '鸟狗 Bird Dog', sets: '3 × 8/侧', setCount: 3, tip: '骨盆稳定，对侧手脚伸直停 1 秒' },
+        { id: 'b8', name: '侧平板', sets: '2 × 20 秒/侧', setCount: 2, tip: '肩肘垂直，髋上顶成一条线' }
       ]
     },
     C: {
@@ -45,26 +47,49 @@
       tags: ['腿', '核心', '臀'],
       colorClass: 'C',
       exercises: [
-        { id: 'c1', name: '杠铃深蹲 / 箱式深蹲 / 史密斯', sets: '4 × 8–10', tip: '膝朝脚尖方向，深度舒适即可' },
-        { id: 'c2', name: '腿举 Leg Press', sets: '3 × 10–12', tip: '下背贴靠垫，别完全锁死膝盖' },
-        { id: 'c3', name: '弓步蹲 / 保加利亚分腿蹲', sets: '3 × 8/腿', tip: '哑铃或史密斯；前膝稳定不内扣' },
-        { id: 'c4', name: '腿弯举 / 罗马尼亚硬拉（轻）', sets: '3 × 10–12', tip: '腘绳肌与臀链；RDL 保持背直' },
-        { id: 'c5', name: '臀桥 / 器械髋推', sets: '3 × 12', tip: '顶峰挤臀 1 秒' },
-        { id: 'c6', name: '死虫 或 卷腹', sets: '3 × 10', tip: '任选其一，质量优先' },
-        { id: 'c7', name: '平板支撑', sets: '3 组', tip: '20–40 秒，或力竭前停' }
+        { id: 'c1', name: '杠铃深蹲 / 箱式深蹲 / 史密斯', sets: '4 × 8–10', setCount: 4, tip: '膝朝脚尖方向，深度舒适即可' },
+        { id: 'c2', name: '腿举 Leg Press', sets: '3 × 10–12', setCount: 3, tip: '下背贴靠垫，别完全锁死膝盖' },
+        { id: 'c3', name: '弓步蹲 / 保加利亚分腿蹲', sets: '3 × 8/腿', setCount: 3, tip: '哑铃或史密斯；前膝稳定不内扣' },
+        { id: 'c4', name: '腿弯举 / 罗马尼亚硬拉（轻）', sets: '3 × 10–12', setCount: 3, tip: '腘绳肌与臀链；RDL 保持背直' },
+        { id: 'c5', name: '臀桥 / 器械髋推', sets: '3 × 12', setCount: 3, tip: '顶峰挤臀 1 秒' },
+        { id: 'c6', name: '死虫 或 卷腹', sets: '3 × 10', setCount: 3, tip: '任选其一，质量优先' },
+        { id: 'c7', name: '平板支撑', sets: '3 组', setCount: 3, tip: '20–40 秒，或力竭前停' }
       ]
     },
     R: {
       title: '有氧恢复日',
       short: '有氧',
-      desc: '快走、慢跑、椭圆机或动感单车 30–40 分钟，心率舒适可交谈。每周建议 2 次。',
+      desc: '快走、慢跑、椭圆机或动感单车 30–40 分钟，心率舒适可交谈。目标消耗约 300 kcal。',
       tags: ['有氧', '恢复'],
       colorClass: 'R',
       exercises: [
-        { id: 'r1', name: '快走 / 慢跑 / 椭圆机', sets: '30–40 分钟', tip: '中低强度，别影响次日力量' },
-        { id: 'r2', name: '轻度核心或拉伸', sets: '5–10 分钟', tip: '髋屈肌、胸椎、腘绳肌放松' }
+        { id: 'r1', name: '快走 / 慢跑 / 椭圆机', sets: '30–40 分钟 · ~300 kcal', setCount: 1, tip: '中低强度，别影响次日力量' },
+        { id: 'r2', name: '轻度核心或拉伸', sets: '5–10 分钟', setCount: 1, tip: '髋屈肌、胸椎、腘绳肌放松' }
       ]
+    },
+    X: {
+      title: '休息日',
+      short: '休息',
+      desc: '主动恢复：睡眠、散步、拉伸。饮食与饮水照常打卡，不必进健身房。',
+      tags: ['休息', '恢复'],
+      colorClass: 'R',
+      exercises: []
     }
+  };
+
+  const MEALS = [
+    { id: 'breakfast', name: '早餐', kcal: 450, protein: 35, hint: '鸡蛋 / 燕麦 / 奶 · 约 450 kcal' },
+    { id: 'lunch', name: '午餐', kcal: 700, protein: 50, hint: '主食 + 瘦肉/鱼 + 蔬菜 · 约 700 kcal' },
+    { id: 'dinner', name: '晚餐', kcal: 650, protein: 45, hint: '清淡为主，练后可略增碳水 · 约 650 kcal' },
+    { id: 'snack', name: '加餐（可选）', kcal: 200, protein: 10, hint: '酸奶 / 水果 / 坚果一小把 · 约 200 kcal', optional: true }
+  ];
+
+  const CARDIO = {
+    id: 'cardio',
+    name: '有氧训练',
+    minutes: 35,
+    kcal: 300,
+    hint: '椭圆机 / 慢跑 / 快走 30–40 分钟，目标消耗约 300 kcal'
   };
 
   const PULL_STAGES = [
@@ -82,13 +107,17 @@
       goalWeight: 77,
       goalFat: 20,
       startWeight: 87.3,
-      startFat: 26.8
+      startFat: 26.8,
+      dailyKcal: 2000,
+      dailyProtein: 140,
+      waterMl: 2800
     },
     metrics: [
       { date: '2026-10-12', weight: 87.3, fat: 26.8, muscle: 60.6, visceral: 14 }
     ],
     workouts: [],
     checks: {},
+    daily: {},
     progress: {
       pullStage: 0,
       hangSec: 0,
@@ -115,20 +144,69 @@
     return y + '-' + m + '-' + day;
   }
 
+  function formatDateLabel(iso) {
+    const d = new Date(iso + 'T12:00:00');
+    const wd = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
+    return (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日 · 周' + wd;
+  }
+
+  /** Default weekday rotation: Mon A, Tue R, Wed B, Thu R, Fri C, Sat R, Sun rest */
+  function weekdayDefaultPlan(dateIso) {
+    const d = new Date((dateIso || todayStr()) + 'T12:00:00');
+    const map = { 0: 'X', 1: 'A', 2: 'R', 3: 'B', 4: 'R', 5: 'C', 6: 'R' };
+    return map[d.getDay()] || 'A';
+  }
+
+  function emptyDay(plan) {
+    return {
+      plan: plan || weekdayDefaultPlan(),
+      waterTicks: 0,
+      meals: {},
+      exercises: {},
+      cardio: false,
+      celebrated: false,
+      celebrateSeen: false
+    };
+  }
+
+  function getDay(dateIso) {
+    const key = dateIso || todayStr();
+    if (!state.daily[key]) {
+      const planned = (state.lastPlan && state.lastPlan.date === key)
+        ? state.lastPlan.plan
+        : weekdayDefaultPlan(key);
+      state.daily[key] = emptyDay(planned);
+    }
+    const day = state.daily[key];
+    if (!day.meals) day.meals = {};
+    if (!day.exercises) day.exercises = {};
+    if (typeof day.waterTicks !== 'number') day.waterTicks = 0;
+    return day;
+  }
+
+  function migrate(data) {
+    const base = structuredClone(DEFAULTS);
+    const merged = {
+      ...base,
+      ...data,
+      profile: { ...base.profile, ...(data.profile || {}) },
+      progress: { ...base.progress, ...(data.progress || {}) },
+      metrics: Array.isArray(data.metrics) && data.metrics.length ? data.metrics : base.metrics,
+      workouts: Array.isArray(data.workouts) ? data.workouts : [],
+      checks: data.checks || {},
+      daily: data.daily && typeof data.daily === 'object' ? data.daily : {}
+    };
+    if (!merged.profile.dailyKcal) merged.profile.dailyKcal = 2000;
+    if (!merged.profile.dailyProtein) merged.profile.dailyProtein = 140;
+    if (!merged.profile.waterMl) merged.profile.waterMl = 2800;
+    return merged;
+  }
+
   function load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return structuredClone(DEFAULTS);
-      const data = JSON.parse(raw);
-      return {
-        ...structuredClone(DEFAULTS),
-        ...data,
-        profile: { ...DEFAULTS.profile, ...(data.profile || {}) },
-        progress: { ...DEFAULTS.progress, ...(data.progress || {}) },
-        metrics: Array.isArray(data.metrics) && data.metrics.length ? data.metrics : structuredClone(DEFAULTS.metrics),
-        workouts: Array.isArray(data.workouts) ? data.workouts : [],
-        checks: data.checks || {}
-      };
+      return migrate(JSON.parse(raw));
     } catch (e) {
       return structuredClone(DEFAULTS);
     }
@@ -140,6 +218,7 @@
 
   let state = load();
   let currentPlan = suggestPlan();
+  let celebrateArmed = false;
 
   function toast(msg) {
     const el = document.getElementById('toast');
@@ -156,6 +235,11 @@
 
   function calcStreak() {
     const days = new Set(state.workouts.map(w => w.date));
+    // also count full daily completions
+    Object.keys(state.daily || {}).forEach(k => {
+      const d = state.daily[k];
+      if (d && d.celebrated) days.add(k);
+    });
     let streak = 0;
     const d = new Date();
     const t = todayStr();
@@ -198,38 +282,158 @@
 
   function suggestPlan() {
     const t = todayStr();
+    const day = getDay(t);
+    if (day.plan) return day.plan;
     const todayW = state.workouts.find(w => w.date === t);
     if (todayW) return todayW.plan;
     if (state.lastPlan && state.lastPlan.date === t) return state.lastPlan.plan;
+    return weekdayDefaultPlan(t);
+  }
 
-    const week = weekBounds().map(d => d.key);
-    const weekWorkouts = state.workouts.filter(w => week.includes(w.date));
-    const order = ['A', 'B', 'C'];
-    const last = [...state.workouts].sort((a, b) => a.date.localeCompare(b.date)).at(-1);
-    if (!last) return 'A';
-    const cardioCount = weekWorkouts.filter(w => w.plan === 'R').length;
-    const lastIdx = order.indexOf(last.plan);
-    if (last.plan === 'R') {
-      const lastStrength = [...state.workouts].reverse().find(w => order.includes(w.plan));
-      if (!lastStrength) return 'A';
-      const i = order.indexOf(lastStrength.plan);
-      return order[(i + 1) % 3];
-    }
-    if (cardioCount < 2 && weekWorkouts.length >= 2) {
-      const recent = weekWorkouts.slice(-2);
-      if (recent.every(w => order.includes(w.plan))) {
-        if (last.plan === 'C') return 'R';
-      }
-    }
-    if (lastIdx >= 0) return order[(lastIdx + 1) % 3];
-    return 'A';
+  function setTodayPlan(plan) {
+    const day = getDay();
+    day.plan = plan;
+    // clear exercise checks when switching session type
+    day.exercises = {};
+    day.cardio = false;
+    state.lastPlan = { date: todayStr(), plan };
+    currentPlan = plan;
+    save();
   }
 
   function tagClass(plan) {
     if (plan === 'B') return 'blue';
     if (plan === 'C') return 'orange';
-    if (plan === 'R') return 'muted';
+    if (plan === 'R' || plan === 'X') return 'muted';
     return 'green';
+  }
+
+  function mealTotals(day) {
+    let kcal = 0;
+    let protein = 0;
+    MEALS.forEach(m => {
+      if (day.meals[m.id]) {
+        kcal += m.kcal;
+        protein += m.protein;
+      }
+    });
+    return { kcal, protein };
+  }
+
+  function requiredTasks(day) {
+    const plan = day.plan || 'A';
+    const tasks = [];
+
+    // water: complete when all ticks
+    tasks.push({
+      id: 'water',
+      done: (day.waterTicks || 0) >= WATER_TICKS
+    });
+
+    // required meals
+    MEALS.filter(m => !m.optional).forEach(m => {
+      tasks.push({ id: 'meal_' + m.id, done: !!day.meals[m.id] });
+    });
+
+    if (plan === 'R') {
+      tasks.push({ id: 'cardio', done: !!day.cardio });
+    } else if (plan !== 'X' && PLANS[plan]) {
+      PLANS[plan].exercises.forEach(ex => {
+        tasks.push({ id: 'ex_' + ex.id, done: !!day.exercises[ex.id] });
+      });
+    }
+    return tasks;
+  }
+
+  function checklistStats(day) {
+    const tasks = requiredTasks(day);
+    const done = tasks.filter(t => t.done).length;
+    return { done, total: tasks.length, complete: tasks.length > 0 && done === tasks.length };
+  }
+
+  function syncWorkoutFromDay(day) {
+    const plan = day.plan;
+    if (!plan || plan === 'X') return;
+    const p = PLANS[plan];
+    if (!p) return;
+    let doneCount = 0;
+    let total = 0;
+    if (plan === 'R') {
+      total = 1;
+      doneCount = day.cardio ? 1 : 0;
+    } else {
+      total = p.exercises.length;
+      doneCount = p.exercises.filter(e => day.exercises[e.id]).length;
+    }
+    if (doneCount === 0) return;
+    const entry = {
+      date: todayStr(),
+      plan,
+      note: '',
+      doneCount,
+      total,
+      at: new Date().toISOString()
+    };
+    const idx = state.workouts.findIndex(w => w.date === todayStr());
+    if (idx >= 0) {
+      // keep existing note
+      entry.note = state.workouts[idx].note || '';
+      state.workouts[idx] = entry;
+    } else {
+      state.workouts.push(entry);
+    }
+    // sync legacy checks
+    const key = todayStr() + '_' + plan;
+    if (!state.checks[key]) state.checks[key] = {};
+    if (plan !== 'R') {
+      p.exercises.forEach(ex => {
+        state.checks[key][ex.id] = !!day.exercises[ex.id];
+      });
+    }
+  }
+
+  function maybeCelebrate(day) {
+    const stats = checklistStats(day);
+    if (!stats.complete) {
+      celebrateArmed = true; // re-arm if user unchecks
+      return;
+    }
+    if (day.celebrated && day.celebrateSeen) return;
+    if (!day.celebrated) {
+      day.celebrated = true;
+      syncWorkoutFromDay(day);
+      save();
+    }
+    if (!day.celebrateSeen) {
+      showCelebration();
+    }
+  }
+
+  function showCelebration() {
+    const el = document.getElementById('celebrate');
+    const day = getDay();
+    document.getElementById('celMsg').textContent =
+      '今日清单 ' + checklistStats(day).done + '/' + checklistStats(day).total + ' · 全部完成';
+    el.hidden = false;
+    // restart animations
+    el.querySelectorAll('.cel-bloom, .cel-seal, .seal-outer').forEach(node => {
+      node.style.animation = 'none';
+      void node.offsetWidth;
+      node.style.animation = '';
+    });
+    if (navigator.vibrate) {
+      try { navigator.vibrate([12, 40, 18]); } catch (e) { /* ignore */ }
+    }
+    toast('今日全勤 · 打卡成功');
+  }
+
+  function dismissCelebration() {
+    const day = getDay();
+    day.celebrateSeen = true;
+    day.celebrated = true;
+    save();
+    document.getElementById('celebrate').hidden = true;
+    renderHome();
   }
 
   function switchView(name) {
@@ -245,21 +449,203 @@
     window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
   }
 
+  function updateKcalHero(day) {
+    const target = state.profile.dailyKcal || 2000;
+    const proTarget = state.profile.dailyProtein || 140;
+    const waterTarget = state.profile.waterMl || 2800;
+    const totals = mealTotals(day);
+    const remain = Math.max(0, target - totals.kcal);
+    const eatenPct = Math.min(1, totals.kcal / target);
+    const bar = document.getElementById('kcalBar');
+    bar.style.strokeDasharray = String(KCAL_CIRC);
+    bar.style.strokeDashoffset = String(KCAL_CIRC * (1 - eatenPct));
+
+    document.getElementById('kcalRemain').textContent = String(remain);
+    document.getElementById('kcalTargetLabel').textContent = '目标 ' + target;
+    document.getElementById('kcalEatenLabel').textContent = '已摄入 ' + totals.kcal + ' kcal';
+    document.getElementById('proLabel').textContent = totals.protein + ' / ' + proTarget + ' g';
+    document.getElementById('proBar').style.width =
+      Math.min(100, (totals.protein / proTarget) * 100).toFixed(1) + '%';
+
+    const wLiters = (waterTarget / 1000).toFixed(1).replace(/\.0$/, '');
+    const wDone = day.waterTicks || 0;
+    const wMl = Math.round((waterTarget / WATER_TICKS) * wDone);
+    document.getElementById('waterLabel').textContent =
+      (wMl / 1000).toFixed(1).replace(/\.0$/, '') + ' / ' + wLiters + ' L';
+    document.getElementById('waterBar').style.width =
+      Math.min(100, (wDone / WATER_TICKS) * 100).toFixed(1) + '%';
+
+    document.getElementById('noteKcal').textContent = target + ' kcal';
+    document.getElementById('notePro').textContent = proTarget + ' g';
+    document.getElementById('noteWater').textContent = wLiters + ' L';
+  }
+
+  function renderChecklist(day) {
+    const root = document.getElementById('checklistRoot');
+    const plan = day.plan || 'A';
+    const perTick = Math.round((state.profile.waterMl || 2800) / WATER_TICKS);
+    const stats = checklistStats(day);
+    document.getElementById('checkProgress').textContent = stats.done + '/' + stats.total;
+
+    let html = '';
+
+    // Water
+    html += '<div class="cl-group"><div class="cl-head"><h3>饮水</h3></div>';
+    html += '<div class="cl-item water-row' + ((day.waterTicks || 0) >= WATER_TICKS ? ' done' : '') + '">';
+    html += '<div class="water-top" data-act="water-toggle">';
+    html += '<div class="check">' + ((day.waterTicks || 0) >= WATER_TICKS ? CHECK_SVG : '') + '</div>';
+    html += '<div class="cl-body"><div class="cl-title">喝水 ' +
+      ((state.profile.waterMl || 2800) / 1000).toFixed(1).replace(/\.0$/, '') + ' L</div>';
+    html += '<div class="cl-sub">分 ' + WATER_TICKS + ' 次，每次约 ' + perTick + ' ml</div></div></div>';
+    html += '<div class="water-ticks">';
+    for (let i = 1; i <= WATER_TICKS; i++) {
+      html += '<button type="button" class="water-tick' + (i <= (day.waterTicks || 0) ? ' on' : '') +
+        '" data-tick="' + i + '">' + i + '</button>';
+    }
+    html += '</div></div></div>';
+
+    // Meals
+    html += '<div class="cl-group"><div class="cl-head"><h3>饮食</h3>';
+    html += '<span class="muted" style="font-size:11.5px">勾选计入热量与蛋白</span></div>';
+    MEALS.forEach(m => {
+      const on = !!day.meals[m.id];
+      html += '<div class="cl-item' + (on ? ' done' : '') + '" data-act="meal" data-id="' + m.id + '">';
+      html += '<div class="check">' + (on ? CHECK_SVG : '') + '</div>';
+      html += '<div class="cl-body"><div class="cl-title">' + m.name + '</div>';
+      html += '<div class="cl-sub">' + m.hint + '</div>';
+      html += '<div class="cl-meta">' + m.kcal + ' kcal · 蛋白 ' + m.protein + ' g' +
+        (m.optional ? ' · 不计入全勤必选项' : '') + '</div></div></div>';
+    });
+    html += '</div>';
+
+    // Training
+    if (plan === 'X') {
+      html += '<div class="cl-group"><div class="cl-head"><h3>训练</h3></div>';
+      html += '<div class="cl-item done" style="cursor:default"><div class="check">' + CHECK_SVG + '</div>';
+      html += '<div class="cl-body"><div class="cl-title">今日休息</div>';
+      html += '<div class="cl-sub">无需进馆；保持饮食与饮水即可全勤</div></div></div></div>';
+    } else if (plan === 'R') {
+      html += '<div class="cl-group"><div class="cl-head"><h3>有氧</h3></div>';
+      const on = !!day.cardio;
+      html += '<div class="cl-item' + (on ? ' done' : '') + '" data-act="cardio">';
+      html += '<div class="check">' + (on ? CHECK_SVG : '') + '</div>';
+      html += '<div class="cl-body"><div class="cl-title">' + CARDIO.name + '</div>';
+      html += '<div class="cl-sub">' + CARDIO.hint + '</div>';
+      html += '<div class="cl-meta">' + CARDIO.minutes + ' 分钟 · 目标消耗 ~' + CARDIO.kcal + ' kcal</div>';
+      html += '</div></div></div>';
+    } else if (PLANS[plan]) {
+      html += '<div class="cl-group"><div class="cl-head"><h3>' + PLANS[plan].short + ' · 动作</h3>';
+      html += '<span class="muted" style="font-size:11.5px">完成目标组数后勾选</span></div>';
+      PLANS[plan].exercises.forEach(ex => {
+        const on = !!day.exercises[ex.id];
+        html += '<div class="cl-item' + (on ? ' done' : '') + '" data-act="ex" data-id="' + ex.id + '">';
+        html += '<div class="check">' + (on ? CHECK_SVG : '') + '</div>';
+        html += '<div class="cl-body"><div class="cl-title">' + ex.name + '</div>';
+        html += '<div class="cl-sub">' + ex.tip + '</div>';
+        html += '<div class="cl-meta">完成 ' + ex.setCount + ' 组 · ' + ex.sets + '</div>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+    }
+
+    root.innerHTML = html;
+
+    // events
+    root.querySelectorAll('[data-act="meal"]').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.id;
+        day.meals[id] = !day.meals[id];
+        save();
+        afterCheck(day);
+      });
+    });
+    root.querySelectorAll('[data-act="ex"]').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.id;
+        day.exercises[id] = !day.exercises[id];
+        syncWorkoutFromDay(day);
+        save();
+        afterCheck(day);
+      });
+    });
+    root.querySelectorAll('[data-act="cardio"]').forEach(el => {
+      el.addEventListener('click', () => {
+        day.cardio = !day.cardio;
+        syncWorkoutFromDay(day);
+        save();
+        afterCheck(day);
+      });
+    });
+    root.querySelectorAll('.water-tick').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const n = parseInt(btn.dataset.tick, 10);
+        // tap tick N: set to N if currently < N, else set to N-1 (toggle off that level)
+        if ((day.waterTicks || 0) === n) day.waterTicks = n - 1;
+        else day.waterTicks = n;
+        save();
+        afterCheck(day);
+      });
+    });
+    const waterTop = root.querySelector('[data-act="water-toggle"]');
+    if (waterTop) {
+      waterTop.addEventListener('click', () => {
+        if ((day.waterTicks || 0) >= WATER_TICKS) day.waterTicks = 0;
+        else day.waterTicks = WATER_TICKS;
+        save();
+        afterCheck(day);
+      });
+    }
+  }
+
+  function afterCheck(day) {
+    const wasComplete = day.celebrated;
+    const stats = checklistStats(day);
+    if (!stats.complete && wasComplete) {
+      // user unchecked something after completing
+      day.celebrated = false;
+      // keep celebrateSeen so we don't spam if they re-complete same day? 
+      // Spec: persist celebration state so reopening doesn't spam; if they uncheck and recomplete, show again once
+      day.celebrateSeen = false;
+      save();
+    }
+    renderHome();
+    maybeCelebrate(getDay());
+  }
+
   function renderHome() {
     currentPlan = suggestPlan();
-    const plan = PLANS[currentPlan];
+    const day = getDay();
+    day.plan = currentPlan;
+    const plan = PLANS[currentPlan] || PLANS.A;
     const streak = calcStreak();
     document.getElementById('streakChip').innerHTML =
       '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M8 6.5c-2.5 1.5-4 4-4 7a8 8 0 0016 0c0-3-1.5-5.5-4-7M9 14h6"/></svg>' +
       '连续 <strong>' + streak + '</strong> 天';
 
-    document.getElementById('todayLetter').textContent = currentPlan;
+    document.getElementById('todayDateLabel').textContent = formatDateLabel(todayStr());
+    const stats = checklistStats(day);
+    const badge = document.getElementById('dayDoneBadge');
+    if (stats.complete || day.celebrated) {
+      badge.hidden = false;
+    } else {
+      badge.hidden = true;
+    }
+
+    document.getElementById('todayLetter').textContent = currentPlan === 'X' ? '休' : currentPlan;
     document.getElementById('todayLetter').className = 'letter ' + (plan.colorClass || '');
     document.getElementById('todayTitle').textContent = plan.title;
     document.getElementById('todayDesc').textContent = plan.desc;
     document.getElementById('todayTags').innerHTML = plan.tags.map(t =>
       '<span class="tag ' + tagClass(currentPlan) + '">' + t + '</span>'
     ).join('');
+
+    document.querySelectorAll('#planPills button').forEach(b => {
+      b.classList.toggle('on', b.dataset.plan === currentPlan);
+    });
+
+    updateKcalHero(day);
+    renderChecklist(day);
 
     const m = latestMetric();
     if (m) {
@@ -283,13 +669,18 @@
 
     const map = {};
     state.workouts.forEach(w => { map[w.date] = w.plan; });
+    Object.keys(state.daily || {}).forEach(k => {
+      if (state.daily[k] && state.daily[k].celebrated && !map[k]) {
+        map[k] = state.daily[k].plan || 'A';
+      }
+    });
     const grid = document.getElementById('weekGrid');
     grid.innerHTML = weekBounds().map(d => {
       const planCode = map[d.key];
       const cls = planCode ? 'done' + planCode : '';
       return '<div class="day-cell ' + cls + (d.isToday ? ' today' : '') + '">' +
         '<div class="d">周' + d.label + '</div>' +
-        '<div class="mark">' + (planCode || d.dateNum) + '</div></div>';
+        '<div class="mark">' + (planCode === 'X' ? '休' : (planCode || d.dateNum)) + '</div></div>';
     }).join('');
   }
 
@@ -300,16 +691,32 @@
   }
 
   function renderWorkout() {
+    if (currentPlan === 'X') currentPlan = 'A';
     const plan = PLANS[currentPlan];
     document.querySelectorAll('#planSeg button').forEach(b => {
       b.classList.toggle('on', b.dataset.plan === currentPlan);
     });
     document.getElementById('planTitle').textContent = plan.title;
     document.getElementById('planDesc').textContent = plan.desc;
+
+    // prefer daily checklist state
+    const day = getDay();
     const checks = getChecks(currentPlan);
+    if (day.plan === currentPlan) {
+      if (currentPlan === 'R') {
+        // no per-ex
+      } else {
+        plan.exercises.forEach(ex => {
+          if (day.exercises[ex.id]) checks[ex.id] = true;
+        });
+      }
+    }
+
     const list = document.getElementById('exerciseList');
     list.innerHTML = plan.exercises.map(ex => {
-      const done = !!checks[ex.id];
+      const done = currentPlan === 'R'
+        ? (ex.id === 'r1' ? !!day.cardio : !!checks[ex.id])
+        : !!(day.plan === currentPlan ? day.exercises[ex.id] : checks[ex.id]);
       return '<div class="ex-item' + (done ? ' done' : '') + '" data-id="' + ex.id + '">' +
         '<div class="check">' + (done ? CHECK_SVG : '') + '</div>' +
         '<div class="ex-meta"><div class="name">' + ex.name + '</div>' +
@@ -320,8 +727,18 @@
     list.querySelectorAll('.ex-item').forEach(item => {
       item.addEventListener('click', () => {
         const id = item.dataset.id;
-        const c = getChecks(currentPlan);
-        c[id] = !c[id];
+        if (day.plan !== currentPlan) {
+          setTodayPlan(currentPlan);
+        }
+        const d = getDay();
+        if (currentPlan === 'R' && id === 'r1') {
+          d.cardio = !d.cardio;
+        } else {
+          d.exercises[id] = !d.exercises[id];
+          const c = getChecks(currentPlan);
+          c[id] = !!d.exercises[id];
+        }
+        syncWorkoutFromDay(d);
         save();
         renderWorkout();
       });
@@ -333,10 +750,20 @@
 
   function completeWorkout() {
     const note = document.getElementById('workoutNote').value.trim();
-    const checks = getChecks(currentPlan);
+    const day = getDay();
+    if (day.plan !== currentPlan) setTodayPlan(currentPlan);
+    const d = getDay();
     const plan = PLANS[currentPlan];
-    const doneCount = plan.exercises.filter(e => checks[e.id]).length;
-    const idx = state.workouts.findIndex(w => w.date === todayStr());
+    const checks = getChecks(currentPlan);
+    let doneCount = 0;
+    if (currentPlan === 'R') {
+      doneCount = d.cardio ? 1 : plan.exercises.filter(e => checks[e.id]).length;
+    } else {
+      doneCount = plan.exercises.filter(e => d.exercises[e.id] || checks[e.id]).length;
+      plan.exercises.forEach(e => {
+        if (checks[e.id]) d.exercises[e.id] = true;
+      });
+    }
     const entry = {
       date: todayStr(),
       plan: currentPlan,
@@ -345,12 +772,14 @@
       total: plan.exercises.length,
       at: new Date().toISOString()
     };
+    const idx = state.workouts.findIndex(w => w.date === todayStr());
     if (idx >= 0) state.workouts[idx] = entry;
     else state.workouts.push(entry);
     state.lastPlan = { date: todayStr(), plan: currentPlan };
     save();
     toast('已保存 · ' + plan.short + '（' + doneCount + '/' + plan.exercises.length + '）');
     switchView('home');
+    maybeCelebrate(getDay());
   }
 
   function renderMetrics() {
@@ -365,6 +794,9 @@
     document.getElementById('cfgGoalW').value = state.profile.goalWeight;
     document.getElementById('cfgGoalF').value = state.profile.goalFat;
     document.getElementById('cfgBmr').value = state.profile.bmr;
+    document.getElementById('cfgKcal').value = state.profile.dailyKcal || 2000;
+    document.getElementById('cfgProtein').value = state.profile.dailyProtein || 140;
+    document.getElementById('cfgWater').value = state.profile.waterMl || 2800;
 
     const hist = [...state.metrics].sort((a, b) => b.date.localeCompare(a.date));
     const box = document.getElementById('metricsHistory');
@@ -431,7 +863,6 @@
       ctx.stroke();
     }
 
-    // soft fill under line
     ctx.beginPath();
     pts.forEach((p, i) => {
       const x = pad.l + (iw * i) / (pts.length - 1);
@@ -547,14 +978,18 @@
   document.querySelectorAll('.tabbar button').forEach(b => {
     b.addEventListener('click', () => switchView(b.dataset.view));
   });
-  document.getElementById('btnStartWorkout').addEventListener('click', () => {
-    currentPlan = suggestPlan();
-    switchView('workout');
+  document.querySelectorAll('#planPills button').forEach(b => {
+    b.addEventListener('click', () => {
+      setTodayPlan(b.dataset.plan);
+      renderHome();
+      toast('今日改为 · ' + (PLANS[b.dataset.plan] || {}).short);
+    });
   });
   document.querySelectorAll('#planSeg button').forEach(b => {
     b.addEventListener('click', () => {
       currentPlan = b.dataset.plan;
       state.lastPlan = { date: todayStr(), plan: currentPlan };
+      getDay().plan = currentPlan;
       save();
       renderWorkout();
     });
@@ -562,6 +997,11 @@
   document.getElementById('btnCompleteWorkout').addEventListener('click', completeWorkout);
   document.getElementById('btnResetChecks').addEventListener('click', () => {
     state.checks[todayStr() + '_' + currentPlan] = {};
+    const day = getDay();
+    if (day.plan === currentPlan) {
+      day.exercises = {};
+      day.cardio = false;
+    }
     save();
     renderWorkout();
     toast('已重置勾选');
@@ -574,6 +1014,9 @@
     state.profile.goalWeight = parseFloat(document.getElementById('cfgGoalW').value) || state.profile.goalWeight;
     state.profile.goalFat = parseFloat(document.getElementById('cfgGoalF').value) || state.profile.goalFat;
     state.profile.bmr = parseFloat(document.getElementById('cfgBmr').value) || state.profile.bmr;
+    state.profile.dailyKcal = parseFloat(document.getElementById('cfgKcal').value) || 2000;
+    state.profile.dailyProtein = parseFloat(document.getElementById('cfgProtein').value) || 140;
+    state.profile.waterMl = parseFloat(document.getElementById('cfgWater').value) || 2800;
     save();
     toast('设定已保存');
     renderHome();
@@ -618,15 +1061,7 @@
       try {
         const data = JSON.parse(reader.result);
         if (!data || typeof data !== 'object') throw new Error('bad');
-        state = {
-          ...structuredClone(DEFAULTS),
-          ...data,
-          profile: { ...DEFAULTS.profile, ...(data.profile || {}) },
-          progress: { ...DEFAULTS.progress, ...(data.progress || {}) },
-          metrics: Array.isArray(data.metrics) ? data.metrics : structuredClone(DEFAULTS.metrics),
-          workouts: Array.isArray(data.workouts) ? data.workouts : [],
-          checks: data.checks || {}
-        };
+        state = migrate(data);
         save();
         currentPlan = suggestPlan();
         renderHome();
@@ -642,10 +1077,12 @@
     if (!confirm('确定清空全部本地数据？此操作不可撤销。')) return;
     localStorage.removeItem(STORAGE_KEY);
     state = structuredClone(DEFAULTS);
-    currentPlan = 'A';
+    currentPlan = weekdayDefaultPlan();
     renderHome();
     toast('已清空并恢复默认基线');
   });
+  document.getElementById('btnDismissCelebrate').addEventListener('click', dismissCelebration);
+  document.querySelector('.cel-backdrop').addEventListener('click', dismissCelebration);
 
   window.addEventListener('resize', () => {
     if (document.getElementById('view-metrics').classList.contains('active')) drawChart();
@@ -654,14 +1091,24 @@
     document.body.classList.toggle('scrolled', window.scrollY > 8);
   }, { passive: true });
 
-  // theme-color follows scheme
   function syncThemeColor() {
     const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = dark ? '#1c1a18' : '#f3efe9';
+    document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
+      meta.content = dark ? '#1c1a18' : '#f3efe9';
+    });
   }
   syncThemeColor();
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncThemeColor);
 
+  // ensure today day record exists
+  getDay();
+  currentPlan = suggestPlan();
   renderHome();
+
+  // if already complete today but never dismissed overlay this session and celebrateSeen false — show badge only
+  const bootDay = getDay();
+  if (checklistStats(bootDay).complete && bootDay.celebrated && !bootDay.celebrateSeen) {
+    // first completion this day not yet dismissed — show once
+    showCelebration();
+  }
 })();

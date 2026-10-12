@@ -1,29 +1,15 @@
 # 体能小屋 · Train Your Body
 
-Mobile-first PWA for Rein’s gym comeback: body metrics, A/B/C workouts, pull-up stages, and local check-ins.
+个人减脂 / 力量 / 引体向上打卡站（手机浏览器 / 可加到主屏幕）。
 
-> 体脂秤与本站仅供参考，非医疗诊断。
+**在线地址：** https://jiah558.github.io/train-your-body/
 
-## Design
-Matches **绿仔的投资小屋**: Morandi / iOS Liquid Glass — warm greige `#f3efe9`, soft cards, dusty blue-gray accent `#6f8494`, editorial light numerals, frosted sticky header, floating capsule tab bar, automatic warm-charcoal dark mode. System fonts only; no CDN.
+## 今日清单
+- 热量环：目标默认 2000 kcal，勾选三餐后扣减剩余
+- 饮水 2.8 L（4 格）· 蛋白 140 g（随餐累计）
+- 早 / 午 / 晚 / 加餐（可选）建议热量与蛋白
+- 按日轮换 A 推 / B 拉 / C 腿 / 有氧 / 休息，可手动改
+- 力量日：每个动作「完成 N 组」勾选；有氧日：分钟 + 目标消耗 kcal
+- 全部必选项完成后：「今日全勤」印章动画（同日只播一次）
 
-## Features
-- Home dashboard: today’s plan, weight / BF / muscle, 3-month goal bars, week grid
-- Gym A/B/C + cardio plans with exercise check-offs
-- Body metrics + soft chart, baseline/goals
-- Pull-up stages, hang/plank PR, streak
-- localStorage (`tyb_rein_v1`) + JSON export/import
-- Chinese UI, PWA manifest + icon
-
-## Structure
-```
-index.html  manifest.json  icon.svg  .nojekyll
-assets/app.css  assets/app.js
-```
-
-## Local
-```bash
-python3 -m http.server 8000
-```
-
-Live: https://jiah558.github.io/train-your-body/
+数据存本机 `localStorage`（`tyb_rein_v1`），可导出 JSON。

@@ -1,67 +1,29 @@
-# Train Your Body · 重回巅峰
+# 体能小屋 · Train Your Body
 
-给 Rein 用的手机端训练打卡站：减脂、核心、引体向上进阶。数据只存在本机浏览器，无需登录。
+Mobile-first PWA for Rein’s gym comeback: body metrics, A/B/C workouts, pull-up stages, and local check-ins.
 
-## 怎么打开
+> 体脂秤与本站仅供参考，非医疗诊断。
 
-### 方法一：直接打开文件
-1. 用手机或电脑浏览器打开本目录下的 `index.html`
-2. 推荐 Chrome / Safari / Edge
+## Design
+Matches **绿仔的投资小屋**: Morandi / iOS Liquid Glass — warm greige `#f3efe9`, soft cards, dusty blue-gray accent `#6f8494`, editorial light numerals, frosted sticky header, floating capsule tab bar, automatic warm-charcoal dark mode. System fonts only; no CDN.
 
-### 方法二：本地小服务器（可选）
-在本目录执行：
+## Features
+- Home dashboard: today’s plan, weight / BF / muscle, 3-month goal bars, week grid
+- Gym A/B/C + cardio plans with exercise check-offs
+- Body metrics + soft chart, baseline/goals
+- Pull-up stages, hang/plank PR, streak
+- localStorage (`tyb_rein_v1`) + JSON export/import
+- Chinese UI, PWA manifest + icon
 
+## Structure
+```
+index.html  manifest.json  icon.svg  .nojekyll
+assets/app.css  assets/app.js
+```
+
+## Local
 ```bash
-cd /workspace/train-your-body
-python3 -m http.server 8765
+python3 -m http.server 8000
 ```
 
-然后手机和电脑在同一网络时，浏览器访问：`http://<电脑IP>:8765`
-
-## 添加到主屏幕（像 App 一样用）
-
-- **iPhone Safari**：打开页面 → 分享 →「添加到主屏幕」
-- **Android Chrome**：菜单 →「添加到主屏幕」/「安装应用」
-
-添加后可全屏打开，数据仍保存在该浏览器的本地存储中。
-
-## 功能一览
-
-1. **首页**：今日建议训练（A/B/C/有氧）、连续打卡、最新体重/体脂、3 个月目标进度、本周训练日历
-2. **训练打卡**：健身房版 A/B/C + 有氧动作清单，勾选完成、写备注、一键保存
-3. **体测记录**：体重、体脂、内脏脂肪、肌肉量；简易趋势图；可改身高/目标
-4. **进阶**：引体四阶段（悬垂→肩胛→辅助/离心→完整）+ 悬垂/平板 PR
-5. **设置**：导出 / 导入 JSON 备份；清空数据
-
-## 默认基线（可改）
-
-- 身高 174.5 cm · 体重 87.3 kg · 体脂 26.8% · 肌肉 60.6 kg · 内脏脂肪 14 · BMR ~1750
-- 目标：约 3 个月减脂 8–12 kg，体脂贴近 ~20%，保住肌肉，拿下引体向上
-- 饮食提示：约 1900–2100 kcal，蛋白质 130–150 g（仅供参考）
-
-## 健身房训练日（已写入 App）
-
-| 日 | 主题 | 器械重点 |
-|----|------|----------|
-| **A** | 推+核心 | 卧推/器械推胸、哑铃推肩、双杠/辅助双杠、俯卧撑、臀桥、死虫、平板 |
-| **B** | 拉+引体 | 悬垂、肩胛引体、辅助引体机、高位下拉、坐姿/绳索划船、离心引体、鸟狗、侧平板 |
-| **C** | 腿+核心 | 深蹲/箱蹲/史密斯、腿举、弓步/保加利亚、腿弯举或轻 RDL、髋推、死虫/卷腹、平板 |
-| **有氧** | 恢复 | 快走/慢跑/椭圆机 30–40 分钟，每周约 2 次 |
-
-力量 A/B/C 隔天轮换，中间插有氧。
-
-## 数据说明
-
-- 全部存在浏览器 `localStorage`（键名 `tyb_rein_v1`）
-- 换手机或清缓存前，请先到「设置」→「导出 JSON」
-- 体脂秤与本站仅供参考，非医疗诊断
-
-## 文件
-
-```
-train-your-body/
-  index.html      # 主应用（含样式与逻辑）
-  manifest.json   # PWA 清单
-  icon.svg        # 图标
-  README.md       # 说明
-```
+Live: https://jiah558.github.io/train-your-body/

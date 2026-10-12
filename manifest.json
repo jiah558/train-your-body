@@ -1,11 +1,11 @@
 {
-  "name": "Train Your Body · 重回巅峰",
-  "short_name": "Train Body",
+  "name": "体能小屋 · Train Your Body",
+  "short_name": "体能小屋",
   "description": "体脂减脂 · 核心力量 · 引体向上进阶打卡",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0b0f14",
-  "theme_color": "#0b0f14",
+  "background_color": "#f3efe9",
+  "theme_color": "#f3efe9",
   "orientation": "portrait-primary",
   "lang": "zh-CN",
   "icons": [

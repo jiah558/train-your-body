@@ -54,13 +54,17 @@
                 transform="rotate(-90 60 60)"/>
             </svg>
             <div class="kcal-center">
-              <div class="kcal-remain num" id="kcalRemain">2000</div>
+              <div class="kcal-remain num" id="kcalRemain">2100</div>
               <div class="kcal-unit">剩余 kcal</div>
             </div>
           </div>
           <div class="kcal-stats">
             <div class="kcal-k">今日热量</div>
-            <div class="kcal-target num" id="kcalTargetLabel">目标 2000</div>
+            <div class="kcal-mode-row">
+              <button type="button" class="kcal-mode-chip" id="kcalModeChip" title="点击可覆盖今日目标">训练日 2100</button>
+              <button type="button" class="kcal-override-btn" id="kcalOverrideBtn" title="覆盖今日热量">改</button>
+            </div>
+            <div class="kcal-target num" id="kcalTargetLabel">目标 2100 kcal</div>
             <div class="kcal-eaten muted" id="kcalEatenLabel">已摄入 0</div>
             <div class="pro-block">
               <div class="row between">
@@ -130,9 +134,9 @@
           <h2 style="margin:0">目标进度 · 3 个月</h2>
           <span class="tag green">减脂</span>
         </div>
-        <div class="muted" style="margin-top:6px">目标：减脂约 8–12 kg，体脂贴近 ~20%，保住肌肉，拿下引体向上</div>
+        <div class="muted" style="margin-top:6px">第一阶段目标约 80 kg，体脂贴近 ~20%，保住肌肉，拿下引体向上</div>
         <div style="margin-top:14px">
-          <div class="row between"><span class="muted">体重 → 约 75–79 kg</span><span id="wProgText" class="muted num">—</span></div>
+          <div class="row between"><span class="muted">体重 → 约 80 kg</span><span id="wProgText" class="muted num">—</span></div>
           <div class="progress sage"><i id="wProgBar"></i></div>
         </div>
         <div style="margin-top:12px">
@@ -148,7 +152,7 @@
 
       <div class="note-card">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>
-        <div>默认可吃约 <strong id="noteKcal">2000 kcal</strong>，蛋白质 <strong id="notePro">140 g</strong>，饮水 <strong id="noteWater">2.8 L</strong>。主食别断，少油炸甜饮。非医疗建议。</div>
+        <div>训练日约 <strong id="noteKcal">训 2100 / 休 1900</strong>，蛋白质 <strong id="notePro">140 g</strong>，饮水 <strong id="noteWater">2.8 L</strong>。主食别断，少油炸甜饮。非医疗建议。</div>
       </div>
 
       <div class="disclaimer">体脂秤与本站仅供参考，非医疗诊断。若有持续不适请就医。</div>
@@ -212,7 +216,8 @@
           <div class="field"><label>目标体重 kg</label><input type="number" id="cfgGoalW" step="0.1" /></div>
           <div class="field"><label>目标体脂 %</label><input type="number" id="cfgGoalF" step="0.1" /></div>
           <div class="field"><label>基础代谢</label><input type="number" id="cfgBmr" step="1" /></div>
-          <div class="field"><label>每日热量 kcal</label><input type="number" id="cfgKcal" step="10" /></div>
+          <div class="field"><label>训练日热量 kcal</label><input type="number" id="cfgTrainKcal" step="10" /></div>
+          <div class="field"><label>休息日热量 kcal</label><input type="number" id="cfgRestKcal" step="10" /></div>
           <div class="field"><label>每日蛋白 g</label><input type="number" id="cfgProtein" step="1" /></div>
           <div class="field"><label>饮水目标 ml</label><input type="number" id="cfgWater" step="100" /></div>
         </div>

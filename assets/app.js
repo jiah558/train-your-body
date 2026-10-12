@@ -79,6 +79,13 @@
 
   /* ===== Meal catalog & picker ===== */
   const RICE_ADDON = { id: 'addon-rice', name: '米饭（主食搭配）', kcal: 200, protein: 4 };
+  const PROTEIN_ADDONS = [
+    { id: 'eggs', name: '鸡蛋×2', protein: 12, kcal: 140 },
+    { id: 'yogurt', name: '无糖酸奶', protein: 10, kcal: 80 },
+    { id: 'powder', name: '蛋白粉一勺', protein: 20, kcal: 100 }
+  ];
+  const LOW_PROTEIN_BF_IDS = ['bf-aircook', 'bf-zajiang'];
+  const LOW_PROTEIN_BF_G = 25;
   const MEAL_SLOTS = [
     { id: 'breakfast', name: '早餐', required: true, mode: 'single', source: 'breakfast', max: 1 },
     { id: 'lunch', name: '午餐', required: true, mode: 'multi', source: 'lunchDinner', max: 2, allowRice: true },
@@ -93,20 +100,28 @@
 
   function emptyMealSlot(mealId) {
     const def = MEAL_SLOTS.find(m => m.id === mealId);
-    return {
+    const slot = {
       dishIds: [],
       rice: !!(def && def.allowRice),
       done: false
     };
+    if (mealId === 'breakfast') slot.proteinAddons = {};
+    return slot;
   }
 
   function normalizeMealSlot(raw, mealId) {
     if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
-      return {
+      const slot = {
         dishIds: Array.isArray(raw.dishIds) ? raw.dishIds.slice() : [],
         rice: typeof raw.rice === 'boolean' ? raw.rice : emptyMealSlot(mealId).rice,
         done: !!raw.done
       };
+      if (mealId === 'breakfast') {
+        slot.proteinAddons = (raw.proteinAddons && typeof raw.proteinAddons === 'object')
+          ? Object.assign({}, raw.proteinAddons)
+          : {};
+      }
+      return slot;
     }
     // legacy boolean — discard (no dish info)
     return emptyMealSlot(mealId);
@@ -159,7 +174,28 @@
       kcal += RICE_ADDON.kcal;
       protein += RICE_ADDON.protein;
     }
+    if (mealId === 'breakfast' && slot.proteinAddons) {
+      PROTEIN_ADDONS.forEach(a => {
+        if (slot.proteinAddons[a.id]) {
+          kcal += a.kcal;
+          protein += a.protein;
+        }
+      });
+    }
     return { kcal: Math.round(kcal), protein: Math.round(protein) };
+  }
+
+  function breakfastDishProtein(slot) {
+    let protein = 0;
+    resolveDishes(slot.dishIds).forEach(d => { protein += Number(d.protein) || 0; });
+    return protein;
+  }
+
+  function needsProteinNudge(slot) {
+    if (!mealHasSelection(slot)) return false;
+    const dishes = resolveDishes(slot.dishIds);
+    const lowId = dishes.some(d => LOW_PROTEIN_BF_IDS.indexOf(d.id) >= 0);
+    return lowId || breakfastDishProtein(slot) < LOW_PROTEIN_BF_G;
   }
 
   function mealHasSelection(slot) {
@@ -174,6 +210,11 @@
     const names = dishes.map(d => d.name);
     const def = MEAL_SLOTS.find(m => m.id === mealId);
     if (def && def.allowRice && slot.rice) names.push('米饭');
+    if (mealId === 'breakfast' && slot.proteinAddons) {
+      PROTEIN_ADDONS.forEach(a => {
+        if (slot.proteinAddons[a.id]) names.push(a.name);
+      });
+    }
     const macros = mealSlotMacros(slot, mealId);
     return {
       sub: names.join(' · '),
@@ -353,6 +394,10 @@
     const slot = day.meals[pickerState.mealId];
     slot.dishIds = pickerState.dishIds.slice();
     slot.rice = !!pickerState.rice;
+    if (pickerState.mealId === 'breakfast') {
+      if (!slot.proteinAddons) slot.proteinAddons = {};
+      // keep existing protein addon toggles across dish changes
+    }
     // selecting dishes marks ready; auto-check if has selection
     slot.done = mealHasSelection(slot) || (!def.required && slot.dishIds.length > 0);
     if (!def.required && slot.dishIds.length === 0) slot.done = false;
@@ -404,11 +449,13 @@
       name: 'Rein',
       height: 174.5,
       bmr: 1750,
-      goalWeight: 77,
+      goalWeight: 80,
       goalFat: 20,
       startWeight: 87.3,
       startFat: 26.8,
       dailyKcal: 2000,
+      trainingKcal: 2100,
+      restKcal: 1900,
       dailyProtein: 140,
       waterMl: 2800
     },
@@ -466,6 +513,7 @@
       meals,
       exercises: {},
       cardio: false,
+      kcalOverride: null,
       celebrated: false,
       celebrateSeen: false
     };
@@ -483,6 +531,7 @@
     ensureMeals(day);
     if (!day.exercises) day.exercises = {};
     if (typeof day.waterTicks !== 'number') day.waterTicks = 0;
+    if (day.kcalOverride === undefined) day.kcalOverride = null;
     return day;
   }
 
@@ -499,9 +548,49 @@
       daily: data.daily && typeof data.daily === 'object' ? data.daily : {}
     };
     if (!merged.profile.dailyKcal) merged.profile.dailyKcal = 2000;
+    if (!merged.profile.trainingKcal) {
+      merged.profile.trainingKcal = merged.profile.dailyKcal >= 2050
+        ? merged.profile.dailyKcal
+        : 2100;
+    }
+    if (!merged.profile.restKcal) {
+      merged.profile.restKcal = merged.profile.dailyKcal <= 1950
+        ? merged.profile.dailyKcal
+        : 1900;
+    }
     if (!merged.profile.dailyProtein) merged.profile.dailyProtein = 140;
     if (!merged.profile.waterMl) merged.profile.waterMl = 2800;
+    // Soft hint: aggressive scale-style goal (~减20kg → ~66.5) → first-stage ~80
+    const gw = Number(merged.profile.goalWeight);
+    if (gw && gw <= 68 && !merged.profile.goalWeightSoftFixed) {
+      merged.profile.goalWeight = 80;
+      merged.profile.goalWeightSoftFixed = true;
+    }
     return merged;
+  }
+
+  function isTrainingPlan(plan) {
+    return plan === 'A' || plan === 'B' || plan === 'C' || plan === 'R';
+  }
+
+  function autoKcalForPlan(plan) {
+    if (isTrainingPlan(plan)) return state.profile.trainingKcal || 2100;
+    return state.profile.restKcal || 1900;
+  }
+
+  function dayKcalTarget(day) {
+    if (day && day.kcalOverride != null && !isNaN(Number(day.kcalOverride))) {
+      return Math.round(Number(day.kcalOverride));
+    }
+    return autoKcalForPlan((day && day.plan) || 'A');
+  }
+
+  function kcalModeLabel(day) {
+    const target = dayKcalTarget(day);
+    if (day && day.kcalOverride != null && !isNaN(Number(day.kcalOverride))) {
+      return '自定 ' + target;
+    }
+    return isTrainingPlan(day.plan) ? ('训练日 ' + target) : ('休息日 ' + target);
   }
 
   function load() {
@@ -760,18 +849,24 @@
   }
 
   function updateKcalHero(day) {
-    const target = state.profile.dailyKcal || 2000;
+    const target = dayKcalTarget(day);
     const proTarget = state.profile.dailyProtein || 140;
     const waterTarget = state.profile.waterMl || 2800;
     const totals = mealTotals(day);
     const remain = Math.max(0, target - totals.kcal);
-    const eatenPct = Math.min(1, totals.kcal / target);
+    const eatenPct = Math.min(1, totals.kcal / Math.max(1, target));
     const bar = document.getElementById('kcalBar');
     bar.style.strokeDasharray = String(KCAL_CIRC);
     bar.style.strokeDashoffset = String(KCAL_CIRC * (1 - eatenPct));
 
     document.getElementById('kcalRemain').textContent = String(remain);
-    document.getElementById('kcalTargetLabel').textContent = '目标 ' + target;
+    const modeChip = document.getElementById('kcalModeChip');
+    if (modeChip) {
+      modeChip.textContent = kcalModeLabel(day);
+      modeChip.classList.toggle('override', day.kcalOverride != null && !isNaN(Number(day.kcalOverride)));
+    }
+    const targetLabel = document.getElementById('kcalTargetLabel');
+    if (targetLabel) targetLabel.textContent = '目标 ' + target + ' kcal';
     document.getElementById('kcalEatenLabel').textContent = '已摄入 ' + totals.kcal + ' kcal';
     document.getElementById('proLabel').textContent = totals.protein + ' / ' + proTarget + ' g';
     document.getElementById('proBar').style.width =
@@ -785,9 +880,37 @@
     document.getElementById('waterBar').style.width =
       Math.min(100, (wDone / WATER_TICKS) * 100).toFixed(1) + '%';
 
-    document.getElementById('noteKcal').textContent = target + ' kcal';
+    const trainK = state.profile.trainingKcal || 2100;
+    const restK = state.profile.restKcal || 1900;
+    document.getElementById('noteKcal').textContent = '训 ' + trainK + ' / 休 ' + restK;
     document.getElementById('notePro').textContent = proTarget + ' g';
     document.getElementById('noteWater').textContent = wLiters + ' L';
+  }
+
+  function promptKcalOverride() {
+    const day = getDay();
+    const cur = dayKcalTarget(day);
+    const auto = autoKcalForPlan(day.plan);
+    const msg = '今日热量目标（kcal）\n当前自动：' + auto +
+      (day.kcalOverride != null ? '\n已覆盖：' + day.kcalOverride : '') +
+      '\n留空或输入 auto 恢复自动';
+    const raw = window.prompt(msg, String(day.kcalOverride != null ? day.kcalOverride : cur));
+    if (raw === null) return;
+    const trimmed = String(raw).trim().toLowerCase();
+    if (trimmed === '' || trimmed === 'auto' || trimmed === '自动') {
+      day.kcalOverride = null;
+      toast('已恢复自动 · ' + kcalModeLabel(day));
+    } else {
+      const n = parseInt(trimmed, 10);
+      if (isNaN(n) || n < 800 || n > 5000) {
+        toast('请输入 800–5000 之间的整数');
+        return;
+      }
+      day.kcalOverride = n;
+      toast('今日覆盖 · ' + n + ' kcal');
+    }
+    save();
+    renderHome();
   }
 
   function renderChecklist(day) {
@@ -832,6 +955,20 @@
       html += '<div class="cl-sub' + (!has ? ' pick-cta' : '') + '">' + escapeHtml(lines.sub) + '</div>';
       html += '<div class="cl-meta">' + escapeHtml(lines.meta) + '</div>';
       html += '</button></div>';
+      if (m.id === 'breakfast' && has && needsProteinNudge(slot)) {
+        if (!slot.proteinAddons) slot.proteinAddons = {};
+        html += '<div class="protein-nudge">';
+        html += '<div class="protein-nudge-title">蛋白偏低，建议加一份 <span class="est">估</span></div>';
+        html += '<div class="protein-nudge-chips">';
+        PROTEIN_ADDONS.forEach(a => {
+          const onA = !!slot.proteinAddons[a.id];
+          html += '<button type="button" class="protein-chip' + (onA ? ' on' : '') +
+            '" data-act="protein-addon" data-id="' + a.id + '">' +
+            (onA ? '✓ ' : '') + escapeHtml(a.name) +
+            ' <span class="muted">+' + a.protein + 'g / +' + a.kcal + 'kcal</span></button>';
+        });
+        html += '</div></div>';
+      }
     });
     html += '</div>';
 
@@ -883,6 +1020,18 @@
           return;
         }
         slot.done = !slot.done;
+        save();
+        afterCheck(day);
+      });
+    });
+    root.querySelectorAll('[data-act="protein-addon"]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        ensureMeals(day);
+        const slot = day.meals.breakfast;
+        if (!slot.proteinAddons) slot.proteinAddons = {};
+        const id = el.dataset.id;
+        slot.proteinAddons[id] = !slot.proteinAddons[id];
         save();
         afterCheck(day);
       });
@@ -1122,7 +1271,8 @@
     document.getElementById('cfgGoalW').value = state.profile.goalWeight;
     document.getElementById('cfgGoalF').value = state.profile.goalFat;
     document.getElementById('cfgBmr').value = state.profile.bmr;
-    document.getElementById('cfgKcal').value = state.profile.dailyKcal || 2000;
+    document.getElementById('cfgTrainKcal').value = state.profile.trainingKcal || 2100;
+    document.getElementById('cfgRestKcal').value = state.profile.restKcal || 1900;
     document.getElementById('cfgProtein').value = state.profile.dailyProtein || 140;
     document.getElementById('cfgWater').value = state.profile.waterMl || 2800;
 
@@ -1310,9 +1460,14 @@
     b.addEventListener('click', () => {
       setTodayPlan(b.dataset.plan);
       renderHome();
-      toast('今日改为 · ' + (PLANS[b.dataset.plan] || {}).short);
+      const day = getDay();
+      toast('今日改为 · ' + (PLANS[b.dataset.plan] || {}).short + ' · ' + kcalModeLabel(day));
     });
   });
+  const kcalModeChip = document.getElementById('kcalModeChip');
+  const kcalOverrideBtn = document.getElementById('kcalOverrideBtn');
+  if (kcalModeChip) kcalModeChip.addEventListener('click', promptKcalOverride);
+  if (kcalOverrideBtn) kcalOverrideBtn.addEventListener('click', promptKcalOverride);
   document.querySelectorAll('#planSeg button').forEach(b => {
     b.addEventListener('click', () => {
       currentPlan = b.dataset.plan;
@@ -1342,7 +1497,9 @@
     state.profile.goalWeight = parseFloat(document.getElementById('cfgGoalW').value) || state.profile.goalWeight;
     state.profile.goalFat = parseFloat(document.getElementById('cfgGoalF').value) || state.profile.goalFat;
     state.profile.bmr = parseFloat(document.getElementById('cfgBmr').value) || state.profile.bmr;
-    state.profile.dailyKcal = parseFloat(document.getElementById('cfgKcal').value) || 2000;
+    state.profile.trainingKcal = parseFloat(document.getElementById('cfgTrainKcal').value) || 2100;
+    state.profile.restKcal = parseFloat(document.getElementById('cfgRestKcal').value) || 1900;
+    state.profile.dailyKcal = Math.round((state.profile.trainingKcal + state.profile.restKcal) / 2);
     state.profile.dailyProtein = parseFloat(document.getElementById('cfgProtein').value) || 140;
     state.profile.waterMl = parseFloat(document.getElementById('cfgWater').value) || 2800;
     save();

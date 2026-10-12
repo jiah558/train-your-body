@@ -1,0 +1,19 @@
+{
+  "name": "Train Your Body · 重回巅峰",
+  "short_name": "Train Body",
+  "description": "体脂减脂 · 核心力量 · 引体向上进阶打卡",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f14",
+  "theme_color": "#0b0f14",
+  "orientation": "portrait-primary",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

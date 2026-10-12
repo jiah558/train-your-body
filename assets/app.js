@@ -1513,7 +1513,7 @@
 
     const muted = cssVar('--tx3', '#8c8279');
     const line = cssVar('--line2', 'rgba(96,80,64,.09)');
-    const color = key === 'fat' ? cssVar('--blue', '#00c2a8') : cssVar('--dn', '#00a894');
+    const color = key === 'fat' ? cssVar('--blue', '#3d8f86') : cssVar('--dn', '#3d8f86');
 
     if (pts.length < 2) {
       ctx.fillStyle = muted;
@@ -1778,7 +1778,7 @@
   function syncThemeColor() {
     const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
-      meta.content = dark ? '#0b1220' : '#eef3f8';
+      meta.content = dark ? '#12161c' : '#f4f6f8';
     });
   }
   syncThemeColor();

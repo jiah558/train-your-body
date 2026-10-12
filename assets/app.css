@@ -1,41 +1,41 @@
-/* 体能小屋 · Train Your Body — 热能蓝绿 athletic energy (distinct from 投资小屋 Morandi) */
+/* 体能小屋 · Train Your Body — 静奢运动 muted athletic premium (distinct from 投资小屋 warm Morandi) */
 :root{
-  --bg:#eef3f8; --card:#ffffff; --card2:#f0f5fa; --fill:rgba(15,45,70,.09); --fill2:rgba(15,45,70,.055);
-  --line:rgba(20,50,80,.14); --line2:rgba(20,50,80,.08);
-  --tx:#0f1b24; --tx2:#3a4a58; --tx3:#6b7c8c; --tx4:#9aabba;
-  --blue:#00c2a8; --blue2:#12d6b8; --blue-bg:rgba(0,194,168,.14); --blue-tx:#007a6c;
-  --up:#e85a3c; --upR:#ff6b4a; --up-bg:rgba(255,107,74,.12);
-  --dn:#00a894; --dnR:#12d6b8; --dn-bg:rgba(0,194,168,.12);
-  --val:#e85a3c; --val-b:rgba(255,107,74,.12); --flat:#7a8b9a;
-  --spark:#ff6b4a; --spark-tx:#c94328; --spark-bg:rgba(255,107,74,.14);
-  --grad-teal:linear-gradient(135deg,#00c2a8 0%,#12d6b8 100%);
-  --grad-energy:linear-gradient(135deg,#00c2a8 0%,#12d6b8 48%,#ff6b4a 100%);
-  --grad-spark:linear-gradient(135deg,#ff6b4a 0%,#ff8f6b 100%);
-  --glass:rgba(238,243,248,.78); --glass-bd:rgba(255,255,255,.65); --glass-hl:inset 0 1px 0 rgba(255,255,255,.75);
-  --sh-card:0 1px 2px rgba(15,40,70,.04),0 8px 24px rgba(15,50,90,.06);
-  --sh-pop:0 14px 40px rgba(15,40,70,.14),0 2px 8px rgba(15,40,70,.06);
-  --sh-glow:0 0 28px rgba(0,194,168,.22),0 0 48px rgba(255,107,74,.1);
-  --warn-bg:#fff0eb; --warn-tx:#9a3d28;
+  --bg:#f4f6f8; --card:#ffffff; --card2:#eef1f4; --fill:rgba(26,34,44,.08); --fill2:rgba(26,34,44,.045);
+  --line:rgba(26,34,44,.1); --line2:rgba(26,34,44,.06);
+  --tx:#1a222c; --tx2:#4a5562; --tx3:#6a7684; --tx4:#98a3ae;
+  --blue:#3d8f86; --blue2:#4a9e94; --blue-bg:rgba(61,143,134,.12); --blue-tx:#2d6e68;
+  --up:#b07a62; --upR:#c4785e; --up-bg:rgba(196,120,94,.1);
+  --dn:#3d8f86; --dnR:#4a9e94; --dn-bg:rgba(61,143,134,.12);
+  --val:#b07a62; --val-b:rgba(176,122,98,.12); --flat:#6a7684;
+  --spark:#c4785e; --spark-tx:#9a5f4a; --spark-bg:rgba(196,120,94,.12);
+  --grad-teal:linear-gradient(135deg,#3d8f86 0%,#4a9e94 100%);
+  --grad-energy:linear-gradient(135deg,#3d8f86 0%,#4a9e94 100%);
+  --grad-spark:linear-gradient(135deg,#b07a62 0%,#c4785e 100%);
+  --glass:rgba(244,246,248,.82); --glass-bd:rgba(255,255,255,.7); --glass-hl:inset 0 1px 0 rgba(255,255,255,.8);
+  --sh-card:0 1px 2px rgba(26,34,44,.03),0 6px 20px rgba(26,34,44,.045);
+  --sh-pop:0 12px 36px rgba(26,34,44,.1),0 2px 6px rgba(26,34,44,.04);
+  --sh-glow:none;
+  --warn-bg:#f7efe9; --warn-tx:#8a5340;
   --r-sm:10px; --r:14px; --r-lg:20px; --r-xl:24px;
-  --spring:cubic-bezier(.34,1.4,.64,1); --ease:cubic-bezier(.32,.72,0,1);
+  --spring:cubic-bezier(.34,1.2,.64,1); --ease:cubic-bezier(.32,.72,0,1);
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,"Segoe UI",sans-serif;
   --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
   --nav-h:72px; --phone:430px;
   color-scheme:light dark;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#0b1220; --card:#141e2e; --card2:#1a2538; --fill:rgba(180,210,240,.1); --fill2:rgba(180,210,240,.06);
-  --line:rgba(180,210,240,.14); --line2:rgba(180,210,240,.08);
-  --tx:#e8eef5; --tx2:#b8c5d4; --tx3:#8494a8; --tx4:#5c6b7e;
-  --blue:#12d6b8; --blue2:#3ee0c8; --blue-bg:rgba(18,214,184,.16); --blue-tx:#7aefd8;
-  --up:#ff7a5c; --upR:#ff8f6b; --up-bg:rgba(255,122,92,.14);
-  --dn:#12d6b8; --dnR:#3ee0c8; --dn-bg:rgba(18,214,184,.14);
-  --val:#ff7a5c; --val-b:rgba(255,122,92,.15); --flat:#8494a8;
-  --spark:#ff7a5c; --spark-tx:#ff9a80; --spark-bg:rgba(255,122,92,.16);
-  --glass:rgba(20,30,46,.78); --glass-bd:rgba(200,220,255,.08); --glass-hl:inset 0 1px 0 rgba(200,220,255,.06);
-  --sh-card:none; --sh-pop:0 16px 48px rgba(0,0,0,.5);
-  --sh-glow:0 0 32px rgba(18,214,184,.28),0 0 56px rgba(255,122,92,.12);
-  --warn-bg:rgba(255,122,92,.12); --warn-tx:#ffb39e;
+  --bg:#12161c; --card:#1c222b; --card2:#242b35; --fill:rgba(220,230,240,.08); --fill2:rgba(220,230,240,.05);
+  --line:rgba(220,230,240,.12); --line2:rgba(220,230,240,.07);
+  --tx:#e8ecf1; --tx2:#b4bcc8; --tx3:#8490a0; --tx4:#5c6776;
+  --blue:#4a9e94; --blue2:#5aada3; --blue-bg:rgba(74,158,148,.16); --blue-tx:#8ec9c1;
+  --up:#c4785e; --upR:#d08a72; --up-bg:rgba(196,120,94,.14);
+  --dn:#4a9e94; --dnR:#5aada3; --dn-bg:rgba(74,158,148,.14);
+  --val:#c4785e; --val-b:rgba(196,120,94,.15); --flat:#8490a0;
+  --spark:#c4785e; --spark-tx:#d4a090; --spark-bg:rgba(196,120,94,.16);
+  --glass:rgba(28,34,43,.82); --glass-bd:rgba(220,230,240,.08); --glass-hl:inset 0 1px 0 rgba(220,230,240,.05);
+  --sh-card:none; --sh-pop:0 16px 48px rgba(0,0,0,.45);
+  --sh-glow:none;
+  --warn-bg:rgba(196,120,94,.12); --warn-tx:#e0b5a4;
 }}
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -153,9 +153,9 @@ body.scrolled .appbar{border-bottom-color:var(--line)}
 
 /* soft progress */
 .progress{height:6px;background:var(--fill2);border-radius:999px;overflow:hidden;margin-top:8px}
-.progress>i{display:block;height:100%;width:0%;border-radius:999px;background:var(--grad-teal);opacity:.95;transition:width .4s var(--ease)}
-.progress.sage>i{background:var(--grad-teal)}
-.progress.warm>i{background:var(--grad-energy)}
+.progress>i{display:block;height:100%;width:0%;border-radius:999px;background:var(--blue);opacity:.95;transition:width .4s var(--ease)}
+.progress.sage>i{background:var(--blue)}
+.progress.warm>i{background:var(--blue)}
 
 /* buttons */
 .btn{
@@ -163,13 +163,13 @@ body.scrolled .appbar{border-bottom-color:var(--line)}
   width:100%;height:46px;padding:0 16px;border-radius:14px;
   font-size:15px;font-weight:500;background:var(--fill2);color:var(--tx2)
 }
-.btn.primary{background:var(--grad-teal);color:#fff;box-shadow:0 4px 14px rgba(0,194,168,.28)}
+.btn.primary{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(61,143,134,.18)}
 .btn.tonal{background:var(--blue-bg);color:var(--blue-tx)}
 .btn.ghost{background:transparent;color:var(--tx3);height:40px}
 .btn.danger{background:var(--up-bg);color:var(--up)}
 .btn.sm{width:auto;height:32px;padding:0 12px;font-size:12.5px;border-radius:16px;background:var(--fill2);color:var(--tx2)}
 .btn.sm.on{background:var(--blue-bg);color:var(--blue-tx)}
-@media (prefers-color-scheme:dark){.btn.primary{color:#0b1220}}
+@media (prefers-color-scheme:dark){.btn.primary{color:#12161c}}
 
 /* week grid */
 .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;margin-top:4px}
@@ -284,7 +284,7 @@ body::after{
   transition:transform .5s var(--spring),background-color .3s,color .2s
 }
 .tabbar a .ic,.tabbar button .ic{width:22px;height:22px}
-.tabbar a.on,.tabbar button.on{color:#fff;background:var(--grad-teal);box-shadow:0 3px 10px rgba(0,194,168,.28)}
+.tabbar a.on,.tabbar button.on{color:var(--blue-tx);background:var(--blue-bg);box-shadow:none}
 .tabbar a:active,.tabbar button:active{transform:scale(.9);transition:transform .12s ease-out}
 
 /* toast */
@@ -343,7 +343,7 @@ body::after{
   transition:transform .5s var(--spring),background .2s,color .2s
 }
 .plan-pills button:active{transform:scale(.96)}
-.plan-pills button.on{background:var(--grad-teal);color:#fff;box-shadow:0 3px 10px rgba(0,194,168,.3);animation:pillBounce .45s var(--spring)}
+.plan-pills button.on{background:var(--blue-bg);color:var(--blue-tx);box-shadow:none;animation:pillBounce .4s var(--spring)}
 
 /* checklist groups */
 .cl-group{margin-bottom:14px}
@@ -390,7 +390,7 @@ body::after{
 }
 .celebrate[hidden]{display:none!important}
 .cel-backdrop{
-  position:absolute;inset:0;background:rgba(11,18,32,.45);
+  position:absolute;inset:0;background:rgba(18,22,28,.42);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   animation:celFade .45s var(--ease) both
 }
@@ -398,63 +398,62 @@ body::after{
   .cel-backdrop{background:rgba(0,0,0,.55)}
 }
 .cel-bloom{
-  position:absolute;width:280px;height:280px;border-radius:50%;
-  border:2px solid rgba(0,194,168,.45);pointer-events:none;
-  box-shadow:0 0 40px rgba(0,194,168,.25);
-  animation:celBloom 1.2s var(--ease) both
+  position:absolute;width:260px;height:260px;border-radius:50%;
+  border:1.5px solid rgba(61,143,134,.28);pointer-events:none;
+  box-shadow:none;
+  animation:celBloom 1.4s var(--ease) both
 }
 .cel-bloom-2{
-  width:360px;height:360px;border-color:rgba(255,107,74,.35);
-  box-shadow:0 0 48px rgba(255,107,74,.2);
-  animation-delay:.1s;animation-duration:1.45s
+  width:320px;height:320px;border-color:rgba(61,143,134,.16);
+  box-shadow:none;
+  animation-delay:.12s;animation-duration:1.6s
 }
 @keyframes celFade{from{opacity:0}to{opacity:1}}
 @keyframes celBloom{
-  0%{opacity:0;transform:scale(.55)}
-  40%{opacity:.9}
-  100%{opacity:0;transform:scale(1.35)}
+  0%{opacity:0;transform:scale(.7)}
+  35%{opacity:.55}
+  100%{opacity:0;transform:scale(1.2)}
 }
 .cel-seal{
   position:relative;z-index:2;
-  animation:celStamp .85s var(--spring) both
+  animation:celStamp .7s var(--ease) both
 }
 @keyframes celStamp{
-  0%{opacity:0;transform:scale(1.75) rotate(-14deg)}
-  45%{opacity:1;transform:scale(.9) rotate(3deg)}
-  70%{transform:scale(1.06) rotate(-3deg)}
-  100%{opacity:1;transform:scale(1) rotate(-1deg)}
+  0%{opacity:0;transform:scale(1.12)}
+  55%{opacity:1;transform:scale(.98)}
+  100%{opacity:1;transform:scale(1)}
 }
 .seal-outer{
   width:168px;height:168px;border-radius:50%;
-  border:2.5px dashed rgba(255,107,74,.65);
+  border:1.5px solid rgba(61,143,134,.35);
   display:grid;place-items:center;padding:8px;
-  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.98),rgba(238,243,248,.95) 55%,rgba(0,194,168,.12));
-  box-shadow:0 12px 40px rgba(0,194,168,.22),0 0 0 6px rgba(255,107,74,.12),inset 0 1px 0 rgba(255,255,255,.8);
-  animation:celPulse 1.8s ease-in-out .75s infinite
+  background:var(--card);
+  box-shadow:0 8px 28px rgba(26,34,44,.08),0 0 0 5px rgba(61,143,134,.08),inset 0 1px 0 rgba(255,255,255,.85);
+  animation:none
 }
 @media (prefers-color-scheme:dark){
   .seal-outer{
-    background:radial-gradient(circle at 35% 30%,rgba(30,42,60,.98),rgba(20,30,46,.95) 55%,rgba(18,214,184,.15));
-    border-color:rgba(255,122,92,.55);
-    box-shadow:0 16px 48px rgba(0,0,0,.5),0 0 0 6px rgba(255,122,92,.14),inset 0 1px 0 rgba(200,220,255,.06)
+    background:var(--card);
+    border-color:rgba(74,158,148,.4);
+    box-shadow:0 12px 36px rgba(0,0,0,.4),0 0 0 5px rgba(74,158,148,.12),inset 0 1px 0 rgba(220,230,240,.05)
   }
 }
 @keyframes celPulse{
-  0%,100%{transform:scale(1);box-shadow:0 12px 40px rgba(0,194,168,.22),0 0 0 6px rgba(255,107,74,.12),inset 0 1px 0 rgba(255,255,255,.8)}
-  50%{transform:scale(1.04);box-shadow:0 16px 48px rgba(0,194,168,.3),0 0 0 10px rgba(255,107,74,.18),inset 0 1px 0 rgba(255,255,255,.85)}
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1)}
 }
 .seal-inner{
   width:100%;height:100%;border-radius:50%;
-  border:1.5px solid rgba(0,194,168,.4);
+  border:1px solid rgba(61,143,134,.28);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px
 }
 .seal-mark{
-  font-size:26px;font-weight:700;letter-spacing:.28em;padding-left:.28em;
-  background:var(--grad-energy);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:24px;font-weight:600;letter-spacing:.24em;padding-left:.24em;
+  color:var(--blue-tx);background:none;
   line-height:1.1
 }
 @supports not ((-webkit-background-clip:text) or (background-clip:text)){
-  .seal-mark{color:var(--spark);background:none}
+  .seal-mark{color:var(--blue-tx);background:none}
 }
 .seal-sub{font-size:11px;color:var(--tx3);letter-spacing:.12em}
 .cel-msg{
@@ -475,7 +474,7 @@ body.sheet-open{overflow:hidden}
 .sheet{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;justify-content:flex-end}
 .sheet[hidden]{display:none!important}
 .sheet-backdrop{
-  position:absolute;inset:0;background:rgba(11,18,32,.4);
+  position:absolute;inset:0;background:rgba(18,22,28,.38);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   animation:celFade .3s var(--ease) both
 }
@@ -527,7 +526,7 @@ body.sheet-open{overflow:hidden}
   border:.5px solid transparent;transition:transform .4s var(--spring),background .2s,border-color .2s
 }
 .dish-card:active{transform:scale(.98)}
-.dish-card.on{background:linear-gradient(160deg,var(--dn-bg),transparent 70%),var(--card2);border-color:rgba(0,194,168,.4)}
+.dish-card.on{background:linear-gradient(160deg,var(--dn-bg),transparent 70%),var(--card2);border-color:rgba(61,143,134,.35)}
 .dish-check{
   width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line);
   display:grid;place-items:center;flex:none;margin-top:1px;background:var(--card)
@@ -557,7 +556,7 @@ body.sheet-open{overflow:hidden}
   background:var(--val-b);color:var(--val);font-size:12.5px;font-weight:500;
   border:.5px solid transparent
 }
-.rice-chip.on{border-color:rgba(255,107,74,.4)}
+.rice-chip.on{border-color:rgba(196,120,94,.35)}
 .rice-hint{font-size:11.5px;margin-top:6px;padding:0 2px}
 
 /* meal checklist row */
@@ -572,7 +571,7 @@ body.sheet-open{overflow:hidden}
   flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;cursor:pointer;color:inherit
 }
 .pick-cta{color:var(--blue-tx)!important;font-weight:500}
-.meal-item.need-pick{box-shadow:inset 0 0 0 .5px rgba(0,194,168,.28)}
+.meal-item.need-pick{box-shadow:inset 0 0 0 .5px rgba(61,143,134,.28)}
 .opt-tag{
   display:inline-block;font-size:10px;font-weight:600;letter-spacing:.04em;
   color:var(--tx4);background:var(--fill2);padding:1px 6px;border-radius:6px;
@@ -592,7 +591,7 @@ body.sheet-open{overflow:hidden}
   transition:transform .4s var(--spring),background .2s,color .2s
 }
 .kcal-mode-chip:active{transform:scale(.96)}
-.kcal-mode-chip.override{background:var(--warm-bg,rgba(255,107,74,.2));color:var(--spark-tx)}
+.kcal-mode-chip.override{background:var(--spark-bg);color:var(--spark-tx)}
 .kcal-override-btn{
   height:26px;min-width:28px;padding:0 8px;border-radius:13px;font-size:11.5px;font-weight:500;
   background:var(--fill2);color:var(--tx3);cursor:pointer
@@ -603,15 +602,15 @@ body.sheet-open{overflow:hidden}
 /* protein nudge under breakfast */
 .protein-nudge{
   margin:-2px 0 8px;padding:10px 12px 12px;border-radius:var(--r-lg);
-  background:linear-gradient(160deg,rgba(255,107,74,.1),transparent 70%),var(--card2);
-  border:1px solid rgba(255,107,74,.2)
+  background:var(--spark-bg);
+  border:1px solid rgba(196,120,94,.18)
 }
 .protein-nudge-title{
   font-size:12.5px;font-weight:500;color:var(--tx2);margin-bottom:8px;letter-spacing:.01em
 }
 .protein-nudge-title .est{
   display:inline-block;font-size:10px;font-weight:600;letter-spacing:.06em;
-  padding:1px 5px;border-radius:4px;background:rgba(255,107,74,.16);color:var(--spark-tx);vertical-align:1px
+  padding:1px 5px;border-radius:4px;background:var(--spark-bg);color:var(--spark-tx);vertical-align:1px
 }
 .protein-nudge-chips{display:flex;flex-wrap:wrap;gap:6px}
 .protein-chip{
@@ -621,7 +620,7 @@ body.sheet-open{overflow:hidden}
   transition:transform .4s var(--spring),background .2s,border-color .2s
 }
 .protein-chip:active{transform:scale(.96)}
-.protein-chip.on{border-color:rgba(255,107,74,.45);background:rgba(255,107,74,.14)}
+.protein-chip.on{border-color:rgba(196,120,94,.4);background:var(--spark-bg)}
 .protein-chip .muted{font-size:10.5px;font-weight:400;margin-left:2px}
 
 /* ===== Ergonomics v2: habit-app density ===== */
@@ -655,23 +654,23 @@ body.sheet-open{overflow:hidden}
 .next-todo{
   display:flex;align-items:center;gap:10px;width:100%;text-align:left;
   min-height:52px;padding:10px 14px;border-radius:var(--r-lg);
-  background:linear-gradient(135deg,rgba(0,194,168,.16),rgba(255,107,74,.1));
-  border:.5px solid rgba(0,194,168,.32);cursor:pointer;
-  box-shadow:0 4px 16px rgba(0,194,168,.12),inset 0 0 0 1px rgba(255,107,74,.12);
-  transition:transform .5s var(--spring),box-shadow .25s,opacity .2s
+  background:var(--blue-bg);
+  border:.5px solid rgba(61,143,134,.2);cursor:pointer;
+  box-shadow:none;
+  transition:transform .5s var(--spring),box-shadow .25s,opacity .2s,background .2s
 }
 .next-todo:active{transform:scale(.98)}
 .next-todo.done-all{
-  background:linear-gradient(135deg,rgba(0,194,168,.2),rgba(0,194,168,.08));
-  border-color:rgba(0,194,168,.4);box-shadow:0 4px 16px rgba(0,194,168,.15)
+  background:var(--dn-bg);
+  border-color:rgba(61,143,134,.28);box-shadow:none
 }
 .next-k{
-  flex:none;font-size:10.5px;font-weight:700;letter-spacing:.1em;
-  color:#fff;padding:4px 8px;border-radius:7px;background:var(--grad-energy);
-  box-shadow:0 2px 8px rgba(255,107,74,.25)
+  flex:none;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  color:var(--spark-tx);padding:4px 8px;border-radius:7px;background:var(--spark-bg);
+  box-shadow:none
 }
 @media (prefers-color-scheme:dark){
-  .next-k{background:var(--grad-energy);color:#fff}
+  .next-k{background:var(--spark-bg);color:var(--spark-tx)}
 }
 .next-t{flex:1;min-width:0;font-size:15px;font-weight:500;letter-spacing:-.01em;line-height:1.3}
 .next-go{flex:none;font-size:20px;color:var(--tx3);line-height:1;opacity:.7}
@@ -740,8 +739,8 @@ body.sheet-open{overflow:hidden}
 
 /* First-run breakfast primary */
 .cl-item.need-pick.primary-pick{
-  box-shadow:inset 0 0 0 1.5px rgba(0,194,168,.5);
-  background:linear-gradient(160deg,var(--blue-bg),transparent 55%),var(--card2)
+  box-shadow:inset 0 0 0 1.5px rgba(61,143,134,.35);
+  background:var(--blue-bg)
 }
 .cl-item.need-pick.primary-pick .pick-cta{color:var(--blue-tx)!important;font-weight:600}
 
@@ -834,81 +833,67 @@ body.sheet-open{overflow:hidden}
 }
 
 
-/* ===== 热能蓝绿 signature details ===== */
+/* ===== 静奢运动 signature details ===== */
 @keyframes pillBounce{
   0%{transform:scale(1)}
-  40%{transform:scale(1.1)}
+  40%{transform:scale(1.04)}
   100%{transform:scale(1)}
 }
 
-/* Brand mark: teal glow + energy title */
+/* Brand: quiet mark, solid title */
 .brand .mark{
   color:var(--blue);
-  filter:drop-shadow(0 0 5px rgba(0,194,168,.4)) drop-shadow(0 0 10px rgba(255,107,74,.18));
+  filter:none;
 }
-.brand .mark circle{fill:var(--spark);opacity:1}
+.brand .mark circle{fill:var(--spark);opacity:.9}
 .brand .wm-t{
-  background:var(--grad-energy);-webkit-background-clip:text;background-clip:text;color:transparent;
-  font-weight:600;
-}
-@supports not ((-webkit-background-clip:text) or (background-clip:text)){
-  .brand .wm-t{color:var(--tx);background:none}
+  color:var(--tx);background:none;
+  font-weight:550;
 }
 
-/* Streak chip: coral spark */
+/* Streak: soft clay, no glow */
 #streakChip{
   background:var(--spark-bg);color:var(--spark-tx);
-  box-shadow:0 0 12px rgba(255,107,74,.18)
+  box-shadow:none
 }
 #streakChip strong{color:var(--spark-tx)}
 
-/* Today top: soft energy glow behind progress */
+/* Today top: flat card, no neon mesh */
 .today-top{
   position:relative;overflow:hidden;
-  background:
-    radial-gradient(ellipse 80% 60% at 15% 0%,rgba(0,194,168,.12),transparent 55%),
-    radial-gradient(ellipse 70% 50% at 95% 20%,rgba(255,107,74,.1),transparent 50%),
-    var(--card)
+  background:var(--card)
 }
 .prog-num{font-weight:400}
 .prog-cell:first-child .prog-num{
-  background:var(--grad-energy);-webkit-background-clip:text;background-clip:text;color:transparent;
-}
-@supports not ((-webkit-background-clip:text) or (background-clip:text)){
-  .prog-cell:first-child .prog-num{color:var(--tx);background:none}
+  color:var(--tx);background:none;
 }
 
-/* Session pills: active filled teal + bounce (session-row denser) */
+/* Session pills: soft teal wash */
 .session-row .plan-pills button.on,
 .plan-pills button.on{
-  background:var(--grad-teal)!important;color:#fff!important;
-  box-shadow:0 3px 12px rgba(0,194,168,.32);
+  background:var(--blue-bg)!important;color:var(--blue-tx)!important;
+  box-shadow:none;
 }
 @media (prefers-reduced-motion:reduce){
   .plan-pills button.on{animation:none!important}
 }
 
-/* Nudge remain: coral urgency */
+/* Nudge: clay, restrained */
 .nudge-remain{color:var(--spark-tx)}
 
-/* Done badge: teal energy */
+/* Done badge: muted teal */
 .done-badge{
   background:var(--blue-bg);color:var(--blue-tx);
-  box-shadow:0 0 0 1px rgba(0,194,168,.2)
+  box-shadow:none
 }
 
-/* Water ticks on: teal */
-.water-tick.on{background:var(--grad-teal);border-color:transparent;color:#fff;box-shadow:0 2px 8px rgba(0,194,168,.25)}
-
-/* Checkmarks done: teal */
+/* Water / checks: flat muted teal */
+.water-tick.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:none}
 .cl-item.done .check,.ex-item.done .check,.meal-item.done .meal-check,.dish-card.on .dish-check{
-  background:var(--grad-teal);border-color:transparent;color:#fff
+  background:var(--blue);border-color:var(--blue);color:#fff
 }
 
-/* Focus ring teal */
 :focus-visible{outline-color:var(--blue)}
-
-/* Shell comment fix */
 
 /* Hide legacy unused ring styles safely */
 .kcal-hero{display:none}

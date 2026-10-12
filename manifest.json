@@ -4,8 +4,8 @@
   "description": "体脂减脂 · 核心力量 · 引体向上进阶打卡",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#eef3f8",
-  "theme_color": "#eef3f8",
+  "background_color": "#f4f6f8",
+  "theme_color": "#f4f6f8",
   "orientation": "portrait-primary",
   "lang": "zh-CN",
   "icons": [

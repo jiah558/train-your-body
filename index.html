@@ -29,7 +29,6 @@
           </svg>
           <div>
             <div class="wm-t">体能小屋</div>
-            <div class="wm-sub">Train Your Body · Rein</div>
           </div>
         </div>
         <div class="chip" id="streakChip">连续 <strong>0</strong> 天</div>
@@ -43,119 +42,106 @@
         <span class="done-badge" id="dayDoneBadge" hidden>已完成</span>
       </div>
 
-      <!-- Calorie hero -->
-      <div class="card kcal-hero">
-        <div class="kcal-top">
-          <div class="kcal-ring-wrap">
-            <svg class="kcal-ring" viewBox="0 0 120 120" aria-hidden="true">
-              <circle class="kcal-track" cx="60" cy="60" r="52"/>
-              <circle class="kcal-bar" id="kcalBar" cx="60" cy="60" r="52"
-                stroke-dasharray="326.73" stroke-dashoffset="326.73"
-                transform="rotate(-90 60 60)"/>
-            </svg>
-            <div class="kcal-center">
-              <div class="kcal-remain num" id="kcalRemain">2100</div>
-              <div class="kcal-unit">剩余 kcal</div>
-            </div>
+      <!-- Compact progress + next action + session pills -->
+      <div class="card today-top">
+        <div class="prog-strip" aria-label="今日进度">
+          <div class="prog-cell">
+            <div class="prog-num num" id="kcalRemain">2100</div>
+            <div class="prog-lbl">剩余 kcal</div>
           </div>
-          <div class="kcal-stats">
-            <div class="kcal-k">今日热量</div>
-            <div class="kcal-mode-row">
-              <button type="button" class="kcal-mode-chip" id="kcalModeChip" title="点击可覆盖今日目标">训练日 2100</button>
-              <button type="button" class="kcal-override-btn" id="kcalOverrideBtn" title="覆盖今日热量">改</button>
-            </div>
-            <div class="kcal-target num" id="kcalTargetLabel">目标 2100 kcal</div>
-            <div class="kcal-eaten muted" id="kcalEatenLabel">已摄入 0</div>
-            <div class="pro-block">
-              <div class="row between">
-                <span class="muted">蛋白质</span>
-                <span class="num muted" id="proLabel">0 / 140 g</span>
-              </div>
-              <div class="progress warm"><i id="proBar"></i></div>
-            </div>
-            <div class="pro-block" style="margin-top:8px">
-              <div class="row between">
-                <span class="muted">饮水</span>
-                <span class="num muted" id="waterLabel">0 / 2.8 L</span>
-              </div>
-              <div class="progress sage"><i id="waterBar"></i></div>
-            </div>
+          <div class="prog-cell">
+            <div class="prog-num num" id="proStrip">0<span class="prog-den">/140</span></div>
+            <div class="prog-lbl">蛋白 g</div>
+          </div>
+          <div class="prog-cell">
+            <div class="prog-num num" id="waterStrip">0<span class="prog-den">/4</span></div>
+            <div class="prog-lbl">饮水</div>
+          </div>
+          <div class="prog-cell">
+            <div class="prog-num num" id="checkStrip">0<span class="prog-den">/0</span></div>
+            <div class="prog-lbl">清单</div>
           </div>
         </div>
+        <div class="prog-bars" aria-hidden="true">
+          <div class="progress warm thin"><i id="proBar"></i></div>
+          <div class="progress sage thin"><i id="waterBar"></i></div>
+        </div>
+
+        <button type="button" class="next-todo" id="nextTodo" aria-live="polite">
+          <span class="next-k">下一件</span>
+          <span class="next-t" id="nextTodoText">先选早餐</span>
+          <span class="next-go" aria-hidden="true">›</span>
+        </button>
+
+        <div class="nudge-remain" id="nudgeRemain" hidden>还差 0 项</div>
+
+        <div class="session-row">
+          <button type="button" class="kcal-mode-chip" id="kcalModeChip" title="点击可覆盖今日目标">训练日 2100</button>
+          <div class="plan-pills" id="planPills" role="group" aria-label="今日训练类型">
+            <button type="button" data-plan="A">A</button>
+            <button type="button" data-plan="B">B</button>
+            <button type="button" data-plan="C">C</button>
+            <button type="button" data-plan="R">氧</button>
+            <button type="button" data-plan="X">休</button>
+          </div>
+        </div>
+        <div class="session-sub muted" id="todayTitle">A · 推+核心</div>
       </div>
 
-      <!-- Session picker -->
-      <div class="card session-card">
-        <div class="row between">
-          <div style="min-width:0">
-            <div class="hero-k">今日训练</div>
-            <div class="hero-title" id="todayTitle" style="margin:4px 0 6px;font-size:18px">A · 推+核心</div>
-            <div class="tags" id="todayTags"></div>
-          </div>
-          <div class="letter" id="todayLetter">A</div>
-        </div>
-        <p class="hero-desc" id="todayDesc" style="margin:10px 0 12px"></p>
-        <div class="plan-pills" id="planPills">
-          <button type="button" data-plan="A">A 推</button>
-          <button type="button" data-plan="B">B 拉</button>
-          <button type="button" data-plan="C">C 腿</button>
-          <button type="button" data-plan="R">有氧</button>
-          <button type="button" data-plan="X">休息</button>
-        </div>
-      </div>
-
-      <!-- Daily checklist -->
+      <!-- Daily checklist — primary interaction zone -->
       <div class="card checklist-card">
-        <div class="row between" style="margin-bottom:4px">
+        <div class="row between cl-card-head">
           <h2 style="margin:0">今日清单</h2>
           <span class="muted num" id="checkProgress">0/0</span>
         </div>
-        <p class="muted" style="margin:0 0 12px;font-size:12.5px">早午晚先点选菜再勾选；热量与蛋白为估测。全部完成后有仪式感打卡</p>
         <div id="checklistRoot"></div>
       </div>
 
-      <div class="grid3">
-        <div class="stat">
-          <div class="label">体重</div>
-          <div class="value num" id="statWeight">—<span class="unit">kg</span></div>
-        </div>
-        <div class="stat">
-          <div class="label">体脂</div>
-          <div class="value num" id="statFat">—<span class="unit">%</span></div>
-        </div>
-        <div class="stat">
-          <div class="label">肌肉</div>
-          <div class="value num" id="statMuscle">—<span class="unit">kg</span></div>
-        </div>
-      </div>
+      <details class="more-fold">
+        <summary>进展与说明</summary>
+        <div class="fold-body">
+          <div class="grid3">
+            <div class="stat">
+              <div class="label">体重</div>
+              <div class="value num" id="statWeight">—<span class="unit">kg</span></div>
+            </div>
+            <div class="stat">
+              <div class="label">体脂</div>
+              <div class="value num" id="statFat">—<span class="unit">%</span></div>
+            </div>
+            <div class="stat">
+              <div class="label">肌肉</div>
+              <div class="value num" id="statMuscle">—<span class="unit">kg</span></div>
+            </div>
+          </div>
 
-      <div class="card">
-        <div class="row between">
-          <h2 style="margin:0">目标进度 · 3 个月</h2>
-          <span class="tag green">减脂</span>
-        </div>
-        <div class="muted" style="margin-top:6px">第一阶段目标约 80 kg，体脂贴近 ~20%，保住肌肉，拿下引体向上</div>
-        <div style="margin-top:14px">
-          <div class="row between"><span class="muted">体重 → 约 80 kg</span><span id="wProgText" class="muted num">—</span></div>
-          <div class="progress sage"><i id="wProgBar"></i></div>
-        </div>
-        <div style="margin-top:12px">
-          <div class="row between"><span class="muted">体脂 → ~20%</span><span id="fProgText" class="muted num">—</span></div>
-          <div class="progress"><i id="fProgBar"></i></div>
-        </div>
-      </div>
+          <div class="card nested">
+            <div class="row between">
+              <h2 style="margin:0">目标进度 · 3 个月</h2>
+              <span class="tag green">减脂</span>
+            </div>
+            <div style="margin-top:14px">
+              <div class="row between"><span class="muted">体重 → 约 80 kg</span><span id="wProgText" class="muted num">—</span></div>
+              <div class="progress sage"><i id="wProgBar"></i></div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="row between"><span class="muted">体脂 → ~20%</span><span id="fProgText" class="muted num">—</span></div>
+              <div class="progress"><i id="fProgBar"></i></div>
+            </div>
+          </div>
 
-      <div class="card">
-        <h2>本周训练</h2>
-        <div class="week-grid" id="weekGrid"></div>
-      </div>
+          <div class="card nested">
+            <h2>本周训练</h2>
+            <div class="week-grid" id="weekGrid"></div>
+          </div>
 
-      <div class="note-card">
-        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>
-        <div>训练日约 <strong id="noteKcal">训 2100 / 休 1900</strong>，蛋白质 <strong id="notePro">140 g</strong>，饮水 <strong id="noteWater">2.8 L</strong>。主食别断，少油炸甜饮。非医疗建议。</div>
-      </div>
-
-      <div class="disclaimer">体脂秤与本站仅供参考，非医疗诊断。若有持续不适请就医。</div>
+          <div class="note-card">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>
+            <div>训练日约 <strong id="noteKcal">训 2100 / 休 1900</strong>，蛋白质 <strong id="notePro">140 g</strong>，饮水 <strong id="noteWater">2.8 L</strong>。主食别断，少油炸甜饮。非医疗建议。</div>
+          </div>
+          <div class="disclaimer">体脂秤与本站仅供参考，非医疗诊断。若有持续不适请就医。</div>
+        </div>
+      </details>
     </section>
 
     <!-- WORKOUT -->
@@ -225,8 +211,8 @@
       </div>
     </section>
 
-    <!-- PROGRESS -->
-    <section class="view" id="view-progress">
+    <!-- ME = progress + settings -->
+    <section class="view" id="view-me">
       <div class="card">
         <h2>引体向上进阶</h2>
         <p class="muted">健身房路线：悬垂 → 肩胛激活 → 辅助/离心 → 完整引体</p>
@@ -257,10 +243,6 @@
           <div class="stat"><div class="label">连续</div><div class="value num" id="statStreak">0</div></div>
         </div>
       </div>
-    </section>
-
-    <!-- SETTINGS -->
-    <section class="view" id="view-settings">
       <div class="card">
         <h2>添加到主屏幕</h2>
         <p class="muted" style="margin:0">Safari / Chrome：分享 →「添加到主屏幕」。可像 App 一样打开，数据仍在本机。</p>
@@ -300,13 +282,9 @@
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="M8 15l3-4 3 2 4-6"/></svg>
       体测
     </button>
-    <button type="button" data-view="progress">
-      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M8 10l4-4 4 4"/><path d="M6 19h12"/></svg>
-      进阶
-    </button>
-    <button type="button" data-view="settings">
-      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M4.9 6.5l1.6 1.6M17.5 15.9l1.6 1.6M3 12h2.2M18.8 12H21M4.9 17.5l1.6-1.6M17.5 8.1l1.6-1.6"/></svg>
-      设置
+    <button type="button" data-view="me">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="3.2"/><path d="M5.5 19c1.2-3.2 3.5-4.8 6.5-4.8s5.3 1.6 6.5 4.8"/></svg>
+      我的
     </button>
   </nav>
 
@@ -326,7 +304,6 @@
     <p class="cel-msg" id="celMsg">今日任务全部完成</p>
     <button type="button" class="btn tonal cel-btn" id="btnDismissCelebrate">收好印章</button>
   </div>
-
 
   <!-- Meal picker sheet -->
   <div class="sheet" id="mealSheet" hidden>

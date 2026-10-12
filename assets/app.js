@@ -478,6 +478,62 @@
 
   const CHECK_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6"/></svg>';
 
+  function prefersReducedMotion() {
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
+  }
+
+  function hapticLight() {
+    if (prefersReducedMotion()) return;
+    if (navigator.vibrate) {
+      try { navigator.vibrate(10); } catch (e) { /* ignore */ }
+    }
+  }
+
+  function popCheckEl(el) {
+    if (!el || prefersReducedMotion()) return;
+    const row = el.closest ? (el.closest('.cl-item') || el.closest('.ex-item') || el) : el;
+    row.classList.remove('check-pop');
+    void row.offsetWidth;
+    row.classList.add('check-pop');
+    clearTimeout(row._popT);
+    row._popT = setTimeout(() => row.classList.remove('check-pop'), 480);
+  }
+
+  function findNextTodo(day) {
+    const plan = day.plan || 'A';
+    ensureMeals(day);
+    // First-run / morning: pick breakfast before anything else
+    const bf = day.meals.breakfast;
+    if (bf && !mealHasSelection(bf)) {
+      return { kind: 'meal-pick', id: 'breakfast', label: '先选早餐', act: 'meal-pick' };
+    }
+    // water
+    if ((day.waterTicks || 0) < WATER_TICKS) {
+      return { kind: 'water', label: '喝水 · 再加一格', act: 'water' };
+    }
+    // meals in order
+    for (const m of MEAL_SLOTS.filter(x => x.required)) {
+      const slot = day.meals[m.id];
+      if (!mealHasSelection(slot)) {
+        return { kind: 'meal-pick', id: m.id, label: '先选' + m.name, act: 'meal-pick' };
+      }
+      if (!slot.done) {
+        return { kind: 'meal-check', id: m.id, label: '勾选' + m.name, act: 'meal-toggle' };
+      }
+    }
+    if (plan === 'R') {
+      if (!day.cardio) return { kind: 'cardio', label: '完成有氧 ~300 kcal', act: 'cardio' };
+    } else if (plan !== 'X' && PLANS[plan]) {
+      for (const ex of PLANS[plan].exercises) {
+        if (!day.exercises[ex.id]) {
+          return { kind: 'ex', id: ex.id, label: '完成 ' + ex.name + ' · ' + ex.setCount + ' 组', act: 'ex' };
+        }
+      }
+    }
+    return { kind: 'done', label: '今日全勤 · 真棒', act: null };
+  }
+
+
   function cssVar(name, fallback) {
     const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
     return v || fallback;
@@ -836,7 +892,11 @@
   }
 
   function switchView(name) {
+    // map legacy names
+    if (name === 'progress' || name === 'settings') name = 'me';
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const view = document.getElementById('view-' + name);
+    if (!view) name = 'home';
     document.getElementById('view-' + name).classList.add('active');
     document.querySelectorAll('.tabbar button').forEach(b => {
       b.classList.toggle('on', b.dataset.view === name);
@@ -844,7 +904,7 @@
     if (name === 'home') renderHome();
     if (name === 'workout') renderWorkout();
     if (name === 'metrics') renderMetrics();
-    if (name === 'progress') renderProgress();
+    if (name === 'me') renderProgress();
     window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
   }
 
@@ -854,37 +914,47 @@
     const waterTarget = state.profile.waterMl || 2800;
     const totals = mealTotals(day);
     const remain = Math.max(0, target - totals.kcal);
-    const eatenPct = Math.min(1, totals.kcal / Math.max(1, target));
-    const bar = document.getElementById('kcalBar');
-    bar.style.strokeDasharray = String(KCAL_CIRC);
-    bar.style.strokeDashoffset = String(KCAL_CIRC * (1 - eatenPct));
+    const stats = checklistStats(day);
+    const wDone = day.waterTicks || 0;
 
     document.getElementById('kcalRemain').textContent = String(remain);
+    const proStrip = document.getElementById('proStrip');
+    if (proStrip) {
+      proStrip.innerHTML = totals.protein + '<span class="prog-den">/' + proTarget + '</span>';
+    }
+    const waterStrip = document.getElementById('waterStrip');
+    if (waterStrip) {
+      waterStrip.innerHTML = wDone + '<span class="prog-den">/' + WATER_TICKS + '</span>';
+    }
+    const checkStrip = document.getElementById('checkStrip');
+    if (checkStrip) {
+      checkStrip.innerHTML = stats.done + '<span class="prog-den">/' + stats.total + '</span>';
+    }
+
     const modeChip = document.getElementById('kcalModeChip');
     if (modeChip) {
       modeChip.textContent = kcalModeLabel(day);
       modeChip.classList.toggle('override', day.kcalOverride != null && !isNaN(Number(day.kcalOverride)));
     }
-    const targetLabel = document.getElementById('kcalTargetLabel');
-    if (targetLabel) targetLabel.textContent = '目标 ' + target + ' kcal';
-    document.getElementById('kcalEatenLabel').textContent = '已摄入 ' + totals.kcal + ' kcal';
-    document.getElementById('proLabel').textContent = totals.protein + ' / ' + proTarget + ' g';
-    document.getElementById('proBar').style.width =
-      Math.min(100, (totals.protein / proTarget) * 100).toFixed(1) + '%';
+
+    const proBar = document.getElementById('proBar');
+    if (proBar) {
+      proBar.style.width = Math.min(100, (totals.protein / proTarget) * 100).toFixed(1) + '%';
+    }
+    const waterBar = document.getElementById('waterBar');
+    if (waterBar) {
+      waterBar.style.width = Math.min(100, (wDone / WATER_TICKS) * 100).toFixed(1) + '%';
+    }
 
     const wLiters = (waterTarget / 1000).toFixed(1).replace(/\.0$/, '');
-    const wDone = day.waterTicks || 0;
-    const wMl = Math.round((waterTarget / WATER_TICKS) * wDone);
-    document.getElementById('waterLabel').textContent =
-      (wMl / 1000).toFixed(1).replace(/\.0$/, '') + ' / ' + wLiters + ' L';
-    document.getElementById('waterBar').style.width =
-      Math.min(100, (wDone / WATER_TICKS) * 100).toFixed(1) + '%';
-
     const trainK = state.profile.trainingKcal || 2100;
     const restK = state.profile.restKcal || 1900;
-    document.getElementById('noteKcal').textContent = '训 ' + trainK + ' / 休 ' + restK;
-    document.getElementById('notePro').textContent = proTarget + ' g';
-    document.getElementById('noteWater').textContent = wLiters + ' L';
+    const noteKcal = document.getElementById('noteKcal');
+    if (noteKcal) noteKcal.textContent = '训 ' + trainK + ' / 休 ' + restK;
+    const notePro = document.getElementById('notePro');
+    if (notePro) notePro.textContent = proTarget + ' g';
+    const noteWater = document.getElementById('noteWater');
+    if (noteWater) noteWater.textContent = wLiters + ' L';
   }
 
   function promptKcalOverride() {
@@ -920,93 +990,152 @@
     const stats = checklistStats(day);
     document.getElementById('checkProgress').textContent = stats.done + '/' + stats.total;
 
-    let html = '';
+    ensureMeals(day);
+
+    // --- Diet group: water + meals; incomplete first ---
+    const dietItems = [];
 
     // Water
-    html += '<div class="cl-group"><div class="cl-head"><h3>饮水</h3></div>';
-    html += '<div class="cl-item water-row' + ((day.waterTicks || 0) >= WATER_TICKS ? ' done' : '') + '">';
-    html += '<div class="water-top" data-act="water-toggle">';
-    html += '<div class="check">' + ((day.waterTicks || 0) >= WATER_TICKS ? CHECK_SVG : '') + '</div>';
-    html += '<div class="cl-body"><div class="cl-title">喝水 ' +
+    const waterDone = (day.waterTicks || 0) >= WATER_TICKS;
+    let waterHtml = '<div class="cl-item water-row' + (waterDone ? ' done' : '') + '" data-sort="' + (waterDone ? '1' : '0') + '">';
+    waterHtml += '<div class="water-top" data-act="water-toggle" role="button" tabindex="0" aria-label="饮水全部完成或重置" aria-pressed="' + (waterDone ? 'true' : 'false') + '">';
+    waterHtml += '<div class="check" aria-hidden="true">' + (waterDone ? CHECK_SVG : '') + '</div>';
+    waterHtml += '<div class="cl-body"><div class="cl-title">喝水 ' +
       ((state.profile.waterMl || 2800) / 1000).toFixed(1).replace(/\.0$/, '') + ' L</div>';
-    html += '<div class="cl-sub">分 ' + WATER_TICKS + ' 次，每次约 ' + perTick + ' ml</div></div></div>';
-    html += '<div class="water-ticks">';
+    waterHtml += '<div class="cl-sub">分 ' + WATER_TICKS + ' 次 · 每次约 ' + perTick + ' ml</div></div></div>';
+    waterHtml += '<div class="water-ticks" role="group" aria-label="饮水格">';
     for (let i = 1; i <= WATER_TICKS; i++) {
-      html += '<button type="button" class="water-tick' + (i <= (day.waterTicks || 0) ? ' on' : '') +
-        '" data-tick="' + i + '">' + i + '</button>';
+      const on = i <= (day.waterTicks || 0);
+      waterHtml += '<button type="button" class="water-tick' + (on ? ' on' : '') +
+        '" data-tick="' + i + '" aria-label="饮水第 ' + i + ' 格" aria-pressed="' + (on ? 'true' : 'false') + '">' + i + '</button>';
     }
-    html += '</div></div></div>';
+    waterHtml += '</div></div>';
+    dietItems.push({ done: waterDone, html: waterHtml, after: '' });
 
-    // Meals (pick dishes then check)
-    ensureMeals(day);
-    html += '<div class="cl-group"><div class="cl-head"><h3>饮食</h3>';
-    html += '<span class="muted" style="font-size:11.5px">选菜后勾选 · 热量为估</span></div>';
+    // Meals
+    let breakfastNeedsPick = false;
     MEAL_SLOTS.forEach(m => {
       const slot = day.meals[m.id];
       const has = mealHasSelection(slot);
       const on = !!(slot.done && has);
+      if (m.id === 'breakfast' && !has) breakfastNeedsPick = true;
       const lines = mealLabelLines(slot, m.id);
-      html += '<div class="cl-item meal-item' + (on ? ' done' : '') + (!has ? ' need-pick' : '') + '" data-meal="' + m.id + '">';
-      html += '<button type="button" class="check meal-check" data-act="meal-toggle" data-id="' + m.id + '" aria-label="勾选' + m.name + '">' +
+      const primary = (m.id === 'breakfast' && !has);
+      let html = '<div class="cl-item meal-item' + (on ? ' done' : '') + (!has ? ' need-pick' : '') +
+        (primary ? ' primary-pick' : '') + '" data-meal="' + m.id + '" data-sort="' + (on ? '1' : '0') + '">';
+      html += '<button type="button" class="check meal-check" data-act="meal-toggle" data-id="' + m.id +
+        '" aria-label="' + (on ? '取消勾选' : '勾选') + m.name + '" aria-checked="' + (on ? 'true' : 'false') + '" role="checkbox">' +
         (on ? CHECK_SVG : '') + '</button>';
-      html += '<button type="button" class="cl-body meal-pick" data-act="meal-pick" data-id="' + m.id + '">';
+      html += '<button type="button" class="cl-body meal-pick" data-act="meal-pick" data-id="' + m.id + '" aria-label="选择' + m.name + '菜品">';
       html += '<div class="cl-title">' + m.name +
         (m.required ? '' : ' <span class="opt-tag">可选</span>') + '</div>';
-      html += '<div class="cl-sub' + (!has ? ' pick-cta' : '') + '">' + escapeHtml(lines.sub) + '</div>';
+      html += '<div class="cl-sub' + (!has ? ' pick-cta' : '') + '">' +
+        escapeHtml(!has && m.id === 'breakfast' ? '先选早餐' : lines.sub) + '</div>';
       html += '<div class="cl-meta">' + escapeHtml(lines.meta) + '</div>';
       html += '</button></div>';
+      let after = '';
       if (m.id === 'breakfast' && has && needsProteinNudge(slot)) {
         if (!slot.proteinAddons) slot.proteinAddons = {};
-        html += '<div class="protein-nudge">';
-        html += '<div class="protein-nudge-title">蛋白偏低，建议加一份 <span class="est">估</span></div>';
-        html += '<div class="protein-nudge-chips">';
+        after += '<div class="protein-nudge">';
+        after += '<div class="protein-nudge-title">蛋白偏低，建议加一份 <span class="est">估</span></div>';
+        after += '<div class="protein-nudge-chips">';
         PROTEIN_ADDONS.forEach(a => {
           const onA = !!slot.proteinAddons[a.id];
-          html += '<button type="button" class="protein-chip' + (onA ? ' on' : '') +
-            '" data-act="protein-addon" data-id="' + a.id + '">' +
+          after += '<button type="button" class="protein-chip' + (onA ? ' on' : '') +
+            '" data-act="protein-addon" data-id="' + a.id + '" aria-pressed="' + (onA ? 'true' : 'false') + '">' +
             (onA ? '✓ ' : '') + escapeHtml(a.name) +
             ' <span class="muted">+' + a.protein + 'g / +' + a.kcal + 'kcal</span></button>';
         });
-        html += '</div></div>';
+        after += '</div></div>';
       }
+      dietItems.push({ done: on || (!m.required && !has), html: html, after: after, optionalEmpty: (!m.required && !has) });
     });
-    html += '</div>';
 
-    // Training
+    // sort: incomplete first (done=false), then done; keep relative order within
+    // optional empty snack: treat as neither blocking — sink mildly if unchecked without selection
+    dietItems.sort((a, b) => (a.done ? 1 : 0) - (b.done ? 1 : 0));
+
+    let html = '';
+    html += '<div class="cl-group"><div class="cl-head"><h3>饮食</h3>';
+    html += '<span class="muted" style="font-size:11px">点行勾选 · 点菜名选菜</span></div>';
+    html += '<div class="cl-list">';
+    dietItems.forEach(it => { html += it.html + it.after; });
+    html += '</div></div>';
+
+    // --- Training group ---
+    const trainItems = [];
     if (plan === 'X') {
-      html += '<div class="cl-group"><div class="cl-head"><h3>训练</h3></div>';
-      html += '<div class="cl-item done" style="cursor:default"><div class="check">' + CHECK_SVG + '</div>';
-      html += '<div class="cl-body"><div class="cl-title">今日休息</div>';
-      html += '<div class="cl-sub">无需进馆；保持饮食与饮水即可全勤</div></div></div></div>';
+      trainItems.push({
+        done: true,
+        html: '<div class="cl-item done" style="cursor:default"><div class="check" aria-hidden="true">' + CHECK_SVG + '</div>' +
+          '<div class="cl-body"><div class="cl-title">今日休息</div>' +
+          '<div class="cl-sub">无需进馆；保持饮食与饮水即可全勤</div></div></div>'
+      });
     } else if (plan === 'R') {
-      html += '<div class="cl-group"><div class="cl-head"><h3>有氧</h3></div>';
       const on = !!day.cardio;
-      html += '<div class="cl-item' + (on ? ' done' : '') + '" data-act="cardio">';
-      html += '<div class="check">' + (on ? CHECK_SVG : '') + '</div>';
-      html += '<div class="cl-body"><div class="cl-title">' + CARDIO.name + '</div>';
-      html += '<div class="cl-sub">' + CARDIO.hint + '</div>';
-      html += '<div class="cl-meta">' + CARDIO.minutes + ' 分钟 · 目标消耗 ~' + CARDIO.kcal + ' kcal</div>';
-      html += '</div></div></div>';
+      trainItems.push({
+        done: on,
+        html: '<div class="cl-item' + (on ? ' done' : '') + '" data-act="cardio" role="checkbox" aria-checked="' + (on ? 'true' : 'false') + '" tabindex="0" aria-label="有氧训练">' +
+          '<div class="check" aria-hidden="true">' + (on ? CHECK_SVG : '') + '</div>' +
+          '<div class="cl-body"><div class="cl-title">' + CARDIO.name + '</div>' +
+          '<div class="cl-sub">' + CARDIO.hint + '</div>' +
+          '<div class="cl-meta">' + CARDIO.minutes + ' 分钟 · 目标消耗 ~' + CARDIO.kcal + ' kcal</div>' +
+          '</div></div>'
+      });
     } else if (PLANS[plan]) {
-      html += '<div class="cl-group"><div class="cl-head"><h3>' + PLANS[plan].short + ' · 动作</h3>';
-      html += '<span class="muted" style="font-size:11.5px">完成目标组数后勾选</span></div>';
       PLANS[plan].exercises.forEach(ex => {
         const on = !!day.exercises[ex.id];
-        html += '<div class="cl-item' + (on ? ' done' : '') + '" data-act="ex" data-id="' + ex.id + '">';
-        html += '<div class="check">' + (on ? CHECK_SVG : '') + '</div>';
-        html += '<div class="cl-body"><div class="cl-title">' + ex.name + '</div>';
-        html += '<div class="cl-sub">' + ex.tip + '</div>';
-        html += '<div class="cl-meta">完成 ' + ex.setCount + ' 组 · ' + ex.sets + '</div>';
-        html += '</div></div>';
+        trainItems.push({
+          done: on,
+          html: '<div class="cl-item' + (on ? ' done' : '') + '" data-act="ex" data-id="' + ex.id +
+            '" role="checkbox" aria-checked="' + (on ? 'true' : 'false') + '" tabindex="0" aria-label="' + escapeHtml(ex.name) + '">' +
+            '<div class="check" aria-hidden="true">' + (on ? CHECK_SVG : '') + '</div>' +
+            '<div class="cl-body"><div class="cl-title">' + ex.name + '</div>' +
+            '<div class="cl-sub">' + ex.tip + '</div>' +
+            '<div class="cl-meta">完成 ' + ex.setCount + ' 组 · ' + ex.sets + '</div>' +
+            '</div></div>'
+        });
       });
-      html += '</div>';
     }
+    trainItems.sort((a, b) => (a.done ? 1 : 0) - (b.done ? 1 : 0));
+
+    const trainHead = plan === 'R' ? '有氧' : (plan === 'X' ? '训练' : ((PLANS[plan] && PLANS[plan].short) + ' · 动作'));
+    html += '<div class="cl-group"><div class="cl-head"><h3>' + trainHead + '</h3>';
+    if (plan !== 'X' && plan !== 'R') {
+      html += '<span class="muted" style="font-size:11px">整行一点即勾</span>';
+    }
+    html += '</div><div class="cl-list">';
+    trainItems.forEach(it => { html += it.html; });
+    html += '</div></div>';
 
     root.innerHTML = html;
 
-    // events
+    // events — one-tap on whole row; meal name opens picker
     root.querySelectorAll('[data-act="meal-pick"]').forEach(el => {
-      el.addEventListener('click', () => openMealSheet(el.dataset.id));
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openMealSheet(el.dataset.id);
+      });
+    });
+    root.querySelectorAll('.meal-item').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('[data-act="meal-pick"]')) return;
+        if (e.target.closest('[data-act="protein-addon"]')) return;
+        const id = row.dataset.meal;
+        const btn = row.querySelector('[data-act="meal-toggle"]');
+        ensureMeals(day);
+        const slot = day.meals[id];
+        if (!mealHasSelection(slot)) {
+          toast('先选菜再勾选');
+          openMealSheet(id);
+          return;
+        }
+        slot.done = !slot.done;
+        hapticLight();
+        popCheckEl(btn || row);
+        save();
+        afterCheck(day);
+      });
     });
     root.querySelectorAll('[data-act="meal-toggle"]').forEach(el => {
       el.addEventListener('click', (e) => {
@@ -1015,11 +1144,13 @@
         ensureMeals(day);
         const slot = day.meals[id];
         if (!mealHasSelection(slot)) {
-          toast('先点右侧选菜');
+          toast('先选菜再勾选');
           openMealSheet(id);
           return;
         }
         slot.done = !slot.done;
+        hapticLight();
+        popCheckEl(el);
         save();
         afterCheck(day);
       });
@@ -1032,6 +1163,7 @@
         if (!slot.proteinAddons) slot.proteinAddons = {};
         const id = el.dataset.id;
         slot.proteinAddons[id] = !slot.proteinAddons[id];
+        hapticLight();
         save();
         afterCheck(day);
       });
@@ -1040,6 +1172,8 @@
       el.addEventListener('click', () => {
         const id = el.dataset.id;
         day.exercises[id] = !day.exercises[id];
+        hapticLight();
+        popCheckEl(el);
         syncWorkoutFromDay(day);
         save();
         afterCheck(day);
@@ -1048,6 +1182,8 @@
     root.querySelectorAll('[data-act="cardio"]').forEach(el => {
       el.addEventListener('click', () => {
         day.cardio = !day.cardio;
+        hapticLight();
+        popCheckEl(el);
         syncWorkoutFromDay(day);
         save();
         afterCheck(day);
@@ -1057,9 +1193,10 @@
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const n = parseInt(btn.dataset.tick, 10);
-        // tap tick N: set to N if currently < N, else set to N-1 (toggle off that level)
         if ((day.waterTicks || 0) === n) day.waterTicks = n - 1;
         else day.waterTicks = n;
+        hapticLight();
+        popCheckEl(btn.closest('.cl-item'));
         save();
         afterCheck(day);
       });
@@ -1069,6 +1206,8 @@
       waterTop.addEventListener('click', () => {
         if ((day.waterTicks || 0) >= WATER_TICKS) day.waterTicks = 0;
         else day.waterTicks = WATER_TICKS;
+        hapticLight();
+        popCheckEl(waterTop.closest('.cl-item'));
         save();
         afterCheck(day);
       });
@@ -1079,15 +1218,79 @@
     const wasComplete = day.celebrated;
     const stats = checklistStats(day);
     if (!stats.complete && wasComplete) {
-      // user unchecked something after completing
       day.celebrated = false;
-      // keep celebrateSeen so we don't spam if they re-complete same day? 
-      // Spec: persist celebration state so reopening doesn't spam; if they uncheck and recomplete, show again once
       day.celebrateSeen = false;
       save();
     }
     renderHome();
     maybeCelebrate(getDay());
+  }
+
+
+  function updateNextTodo(day) {
+    const next = findNextTodo(day);
+    const btn = document.getElementById('nextTodo');
+    const text = document.getElementById('nextTodoText');
+    const nudge = document.getElementById('nudgeRemain');
+    const stats = checklistStats(day);
+    if (text) text.textContent = next.label;
+    if (btn) {
+      btn.classList.toggle('done-all', next.kind === 'done');
+      btn.dataset.act = next.act || '';
+      btn.dataset.id = next.id || '';
+      btn.dataset.kind = next.kind || '';
+    }
+    if (nudge) {
+      const left = Math.max(0, stats.total - stats.done);
+      if (left > 0 && left <= 3 && !stats.complete) {
+        nudge.hidden = false;
+        nudge.textContent = '还差 ' + left + ' 项';
+      } else if (stats.complete) {
+        nudge.hidden = false;
+        nudge.textContent = '全部完成';
+      } else {
+        nudge.hidden = true;
+      }
+    }
+  }
+
+  function activateNextTodo() {
+    const btn = document.getElementById('nextTodo');
+    if (!btn) return;
+    const kind = btn.dataset.kind;
+    const id = btn.dataset.id;
+    const day = getDay();
+    if (kind === 'done') {
+      const list = document.getElementById('checklistRoot');
+      if (list) list.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
+      return;
+    }
+    if (kind === 'meal-pick' || kind === 'meal-check') {
+      if (kind === 'meal-pick' || !mealHasSelection(day.meals[id])) {
+        openMealSheet(id);
+        return;
+      }
+      // scroll to meal row
+      const row = document.querySelector('.meal-item[data-meal="' + id + '"]');
+      if (row) row.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+      return;
+    }
+    if (kind === 'water') {
+      const row = document.querySelector('.cl-item.water-row');
+      if (row) row.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+      return;
+    }
+    if (kind === 'cardio') {
+      const row = document.querySelector('[data-act="cardio"]');
+      if (row) {
+        row.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+      }
+      return;
+    }
+    if (kind === 'ex' && id) {
+      const row = document.querySelector('[data-act="ex"][data-id="' + id + '"]');
+      if (row) row.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+    }
   }
 
   function renderHome() {
@@ -1109,13 +1312,8 @@
       badge.hidden = true;
     }
 
-    document.getElementById('todayLetter').textContent = currentPlan === 'X' ? '休' : currentPlan;
-    document.getElementById('todayLetter').className = 'letter ' + (plan.colorClass || '');
-    document.getElementById('todayTitle').textContent = plan.title;
-    document.getElementById('todayDesc').textContent = plan.desc;
-    document.getElementById('todayTags').innerHTML = plan.tags.map(t =>
-      '<span class="tag ' + tagClass(currentPlan) + '">' + t + '</span>'
-    ).join('');
+    const titleEl = document.getElementById('todayTitle');
+    if (titleEl) titleEl.textContent = plan.title;
 
     document.querySelectorAll('#planPills button').forEach(b => {
       b.classList.toggle('on', b.dataset.plan === currentPlan);
@@ -1123,6 +1321,7 @@
 
     updateKcalHero(day);
     renderChecklist(day);
+    updateNextTodo(day);
 
     const m = latestMetric();
     if (m) {
@@ -1465,9 +1664,9 @@
     });
   });
   const kcalModeChip = document.getElementById('kcalModeChip');
-  const kcalOverrideBtn = document.getElementById('kcalOverrideBtn');
   if (kcalModeChip) kcalModeChip.addEventListener('click', promptKcalOverride);
-  if (kcalOverrideBtn) kcalOverrideBtn.addEventListener('click', promptKcalOverride);
+  const nextTodoBtn = document.getElementById('nextTodo');
+  if (nextTodoBtn) nextTodoBtn.addEventListener('click', activateNextTodo);
   document.querySelectorAll('#planSeg button').forEach(b => {
     b.addEventListener('click', () => {
       currentPlan = b.dataset.plan;

@@ -1513,7 +1513,7 @@
 
     const muted = cssVar('--tx3', '#8c8279');
     const line = cssVar('--line2', 'rgba(96,80,64,.09)');
-    const color = key === 'fat' ? cssVar('--blue', '#6f8494') : cssVar('--dn', '#6a8b72');
+    const color = key === 'fat' ? cssVar('--blue', '#00c2a8') : cssVar('--dn', '#00a894');
 
     if (pts.length < 2) {
       ctx.fillStyle = muted;
@@ -1578,7 +1578,7 @@
       ctx.fill();
       ctx.beginPath();
       ctx.arc(x, y, 1.6, 0, Math.PI * 2);
-      ctx.fillStyle = cssVar('--card', '#fbf9f6');
+      ctx.fillStyle = cssVar('--card', '#ffffff');
       ctx.fill();
     });
 
@@ -1778,7 +1778,7 @@
   function syncThemeColor() {
     const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
-      meta.content = dark ? '#1c1a18' : '#f3efe9';
+      meta.content = dark ? '#0b1220' : '#eef3f8';
     });
   }
   syncThemeColor();
